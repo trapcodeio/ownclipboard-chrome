@@ -1,0 +1,14 @@
+@import "tailwind";
+
+html, body {
+  @apply bg-gray-800;
+}
+
+body {
+  width: 450px;
+  max-width: 450px;
+  height: 500px;
+  max-height: 500px;
+
+  @apply text-gray-200 border border-gray-700
+}
