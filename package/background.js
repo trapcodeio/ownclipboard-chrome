@@ -3,10 +3,10 @@
 // found in the LICENSE file.
 
 'use strict';
+import config from './config.js'
+import {chromeStore} from "./WebStore.js";
 
 // noinspection JSUnresolvedVariable
-chrome.runtime.onInstalled.addListener(function() {
-    chrome.storage.sync.set({app: 'OwnClipBoard'}, function() {
-        console.log("OwnClipBoard is watching");
-    });
+chrome.runtime.onInstalled.addListener(function () {
+    chromeStore.set({config})
 });
