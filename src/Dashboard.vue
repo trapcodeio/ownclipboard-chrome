@@ -71,7 +71,7 @@ import {ref, computed} from "vue";
 import Busy from "@/components/Busy";
 import store from "./store/index";
 import TimeAgo from "@/components/TimeAgo";
-import {copyTextToClipboard, loadClipsFromCacheOrServer, loadClipsFromServer} from "../package/Utils";
+import {copyTextToClipboard, loadClipsFromCacheOrServer, loadClipsFromServer} from "../package/functions/utils.fn";
 import LoadingButton from "@/components/LoadingButton";
 import {chromeStore} from "../package/WebStore";
 import config from "../package/config";

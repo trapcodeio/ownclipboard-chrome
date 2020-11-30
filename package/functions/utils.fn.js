@@ -1,5 +1,5 @@
-import {chromeStore} from "./WebStore";
-import {OwnClipboardApi} from "./OwnClipboardApi";
+import {chromeStore} from "../WebStore.js";
+import {OwnClipboardApi} from "../OwnClipboardApi.js";
 
 export async function loadClipsFromCacheOrServer() {
     const clipsCache = await chromeStore.get('clips');
@@ -10,7 +10,7 @@ export async function loadClipsFromCacheOrServer() {
     }
 }
 
-export async function loadClipsFromServer(){
+export async function loadClipsFromServer() {
     const {clips} = await OwnClipboardApi.getClips()
 
     if (clips) {

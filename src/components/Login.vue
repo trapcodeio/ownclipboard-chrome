@@ -47,7 +47,7 @@ function setup() {
           chromeStore.set({config: newConfig});
           store.commit('setConfig', newConfig);
         })
-        // .catch(err => err)
+        .catch(err => err)
         .finally(() => btn.stopLoading());
   };
 

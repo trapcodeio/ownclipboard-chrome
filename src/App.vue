@@ -26,15 +26,6 @@ import Dashboard from "@/Dashboard";
 
 const isDev = process.env.NODE_ENV === 'development';
 
-function listenForCopy(){
-  document.addEventListener('copy', () => {
-    console.warn('Copy happened!')
-  })
-  console.log('listening for copy events!!');
-}
-
-// listenForCopy();
-
 // Vue 3 Setup
 function setup() {
   const config = ref({
@@ -42,8 +33,6 @@ function setup() {
   });
 
   let loaded = ref(false);
-
-  listenForCopy();
 
   // Mock getting config
   if (isDev) {

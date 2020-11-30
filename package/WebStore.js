@@ -16,17 +16,19 @@ export const chromeStore = {
             }
         })
     },
-    set(data) {
+    set(data, run) {
+        run = run || (() => {
+        });
+
         // noinspection JSUnresolvedVariable
         if (chrome && chrome.storage) {
             // noinspection JSUnresolvedVariable
-            chrome.storage.sync.set(data, function () {
-                console.log("OwnClipBoard is installed!");
-            });
+            chrome.storage.sync.set(data, run);
         } else {
             const firstKey = Object.keys(data)[0];
             if (firstKey) {
                 localStore.setObject(firstKey, data[firstKey])
+                run();
             }
         }
     },

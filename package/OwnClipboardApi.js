@@ -1,5 +1,5 @@
-import http from "./http";
-import {chromeStore} from "./WebStore";
+import http from "./http.js";
+import {chromeStore} from "./WebStore.js";
 
 export class OwnClipboardApi {
     static async getClips(){
