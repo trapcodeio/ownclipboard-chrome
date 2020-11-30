@@ -6,8 +6,33 @@
 import config from './config.js'
 import {chromeStore} from "./WebStore.js";
 
+const clipboard = {
+    get read(){
+        return Clipboard.read()
+    }
+}
+
+class Clipboard {
+    static read() {
+        const textArea = document.getElementById('ocb-chrome-textarea');
+        if (textArea) {
+            textArea.value = '';
+            textArea.select();
+
+            if (document.execCommand('paste')) {
+                return textArea.value;
+            }
+        }
+
+        return null;
+    }
+}
+
 // noinspection JSUnresolvedVariable
 chrome.runtime.onInstalled.addListener(function () {
+    // Set Config
     chromeStore.set({config})
-    console.log("From backgroundFile!")
+
+    // Log
+    console.log(clipboard.read);
 });

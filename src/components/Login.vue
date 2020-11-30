@@ -35,13 +35,15 @@ function setup() {
   });
 
 
-
   const onClickLogin = (btn) => {
     http.post('connect', {api_key: form.value.apiKey})
         .then(data => {
           let newConfig = JSON.parse(JSON.stringify(config.value));
+
+          newConfig.user.key = data['api_key'];
           newConfig.user.connected = true;
-          newConfig.user.connectedData = data
+          newConfig.user.connectedData = data;
+
           chromeStore.set({config: newConfig});
           store.commit('setConfig', newConfig);
         })

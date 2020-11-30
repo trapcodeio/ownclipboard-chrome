@@ -16,19 +16,27 @@ export const chromeStore = {
             }
         })
     },
-    set(data){
+    set(data) {
         // noinspection JSUnresolvedVariable
-        if(chrome && chrome.storage){
+        if (chrome && chrome.storage) {
             // noinspection JSUnresolvedVariable
-            chrome.storage.sync.set(data, function() {
+            chrome.storage.sync.set(data, function () {
                 console.log("OwnClipBoard is installed!");
             });
         } else {
             const firstKey = Object.keys(data)[0];
-            if(firstKey){
+            if (firstKey) {
                 localStore.setObject(firstKey, data[firstKey])
             }
-
+        }
+    },
+    remove(key) {
+        // noinspection JSUnresolvedVariable
+        if (chrome && chrome.storage) {
+            // noinspection JSUnresolvedVariable
+            chrome.storage.sync.remove(key);
+        } else {
+            localStore.remove(key)
         }
     }
 };

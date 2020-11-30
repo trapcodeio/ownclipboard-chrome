@@ -1,25 +1,26 @@
 <template>
   <div class="ocb-chrome-dashboard">
-
     <div class="" v-if="loaded && config">
       <div class="mb-5 mx-3 mt-3">
         <h3 class="text-lg text-center">
           {{ config.appName }}
           <a @click.prevent="logout" class="float-right cursor-pointer text-red-400 hover:text-red-500">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                 xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
           </a>
         </h3>
         <div class="text-xs text-gray-400 mt-2">
-          <span class="float-left">Device: <strong class="text-green-500">{{config.user.connectedData.name}}</strong></span>
+          <span class="float-left">Device: <strong class="text-green-500">{{ config.user.connectedData.name }}</strong></span>
 
           <span class="float-right"> Last Refreshed: <TimeAgo class="text-xs text-green-500"
-                                                                        :date="clips.date"/></span>
-
+                                                              :date="clips.date"/></span>
           <div class="clear-both"></div>
         </div>
 
         <div class="text-center my-3">
-
           <template v-if="isRefreshing">
             <a @click.prevent="isRefreshing=false" class="text-green-500 hover:text-gray-600 cursor-pointer">
               <svg class="w-6 h-6 mx-auto animate-spin" fill="none"
@@ -40,23 +41,26 @@
           </a>
         </div>
       </div>
-      <template v-for="(clip, clipId) in clips.data" :key="clipId">
-        <div class="clip">
-          <h6 v-if="copied===clip.code" class="text-xs text-center capitalize text-green-300">#copied successfully!</h6>
-          <div @click.prevent="previewClip(clip)" class="truncate">
-            {{ clip.content.substring(0, 150) }}{{ clip.content.length > 150 ? '...' : '' }}
-          </div>
-          <div class="meta">
-            <div class="float-left">
-              <TimeAgo class="text-gray-400 text-xs" :date="clip.created_at"></TimeAgo>
+      <div class="clips">
+        <template v-for="(clip, clipId) in clips.data" :key="clipId">
+          <div class="clip">
+            <h6 v-if="copied===clip.code" class="text-xs text-center capitalize text-green-300">#copied
+              successfully!</h6>
+            <div @click.prevent="previewClip(clip)" class="truncate">
+              {{ clip.content.substring(0, 150) }}{{ clip.content.length > 150 ? '...' : '' }}
             </div>
-            <div class="float-right">
-              <a href="#"><span class="text-green-400">view</span></a>
+            <div class="meta">
+              <div class="float-left">
+                <TimeAgo class="text-gray-400 text-xs" :date="clip.created_at"></TimeAgo>
+              </div>
+              <div class="float-right">
+                <a href="#"><span class="text-green-400">view</span></a>
+              </div>
+              <div class="clear-both"></div>
             </div>
-            <div class="clear-both"></div>
           </div>
-        </div>
-      </template>
+        </template>
+      </div>
     </div>
     <Busy v-else message="Fetching clips" class="text-gray-500"/>
   </div>
@@ -127,6 +131,7 @@ export default {
     },
 
     logout() {
+      chromeStore.remove('clips');
       chromeStore.set({config});
       store.commit('setConfig', config);
     }
@@ -136,27 +141,33 @@ export default {
 
 <style lang="scss" scoped>
 .ocb-chrome-dashboard {
-  .clip {
-    @apply cursor-pointer text-gray-400 text-sm bg-gray-900 p-2 rounded mx-3 mt-3;
-    transition: .3s all;
+  .clips {
+    @apply overflow-y-auto;
+    max-height: 360px;
 
-    &:hover {
-      color: #faebd7;
+    .clip {
+      @apply cursor-pointer text-gray-400 text-sm bg-gray-900 p-2 rounded mx-3 mt-3;
+      transition: .3s all;
+
+      &:hover {
+        color: #faebd7;
+
+        .meta {
+          @apply block
+        }
+      }
 
       .meta {
-        @apply block
+        @apply hidden;
       }
     }
 
-    .meta {
-      @apply hidden;
+    .refresh-btn {
+      color: unset;
+      @apply text-sm text-red-50;
     }
   }
 
-  .refresh-btn {
-    color: unset;
-    @apply text-sm text-red-50;
-  }
 }
 
 </style>

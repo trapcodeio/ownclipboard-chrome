@@ -5,7 +5,7 @@
   "manifest_version": 2,
   "background": {
     "page": "background.html",
-    "persistent": false
+    "persistent": true
   },
   "permissions": [
     "activeTab",
@@ -13,6 +13,9 @@
     "clipboardRead",
     "clipboardWrite",
     "contextMenus"
+  ],
+  "optional_permissions": [
+    "tabs"
   ],
   "browser_action": {
     "default_title": "OwnClipboard",
