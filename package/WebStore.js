@@ -1,4 +1,4 @@
-import BrowserStorage from "../node_modules/@trapcode/browser-storage/index.js";
+import BrowserStorage from "./browser-storage/BrowserStorage.js";
 
 export const localStore = BrowserStorage.getLocalStore();
 

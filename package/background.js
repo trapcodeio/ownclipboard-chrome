@@ -8,8 +8,6 @@ import {chromeStore} from "./WebStore.js";
 
 // noinspection JSUnresolvedVariable
 chrome.runtime.onInstalled.addListener(function () {
-    chrome.storage.sync.clear(function(){
-        console.log("Storage cleared!")
-    })
     chromeStore.set({config})
+    console.log("From backgroundFile!")
 });

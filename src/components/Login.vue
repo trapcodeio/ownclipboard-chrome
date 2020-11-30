@@ -13,7 +13,6 @@
         <input type="text" v-model="form.apiKey" placeholder="Your Api Key">
       </div>
     </div>
-
     <div class="mt-3">
       <LoadingButton :click="onClickLogin" class="bg-green-600  hover:bg-green-700">Connect</LoadingButton>
     </div>
@@ -21,37 +20,43 @@
 </template>
 
 <script>
-import {ref} from "vue";
+import {computed, ref} from "vue";
+import store from "../store/index";
 import http from "../../package/http";
 import LoadingButton from "@/components/LoadingButton";
 import {chromeStore} from "../../package/WebStore";
 
-function setup({config}) {
+function setup() {
+  const config = computed(() => store.state.config)
+
   let form = ref({
-    host: config['defaultApiHost'],
-    apiKey: config['user']['key'],
+    host: config.value['defaultApiHost'],
+    apiKey: config.value['user']['key'],
   });
+
+
 
   const onClickLogin = (btn) => {
     http.post('connect', {api_key: form.value.apiKey})
         .then(data => {
-          config.user.connected = true;
-          config.user.connectedData = data;
-          chromeStore.set({config})
+          let newConfig = JSON.parse(JSON.stringify(config.value));
+          newConfig.user.connected = true;
+          newConfig.user.connectedData = data
+          chromeStore.set({config: newConfig});
+          store.commit('setConfig', newConfig);
         })
-        .catch(err => err)
+        // .catch(err => err)
         .finally(() => btn.stopLoading());
   };
 
 
-  return {form, onClickLogin}
+  return {form, onClickLogin, config}
 }
 
 export default {
   components: {LoadingButton},
   setup,
   name: 'Login',
-  props: ['config']
 }
 </script>
 

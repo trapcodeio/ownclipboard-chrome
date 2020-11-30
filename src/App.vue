@@ -1,5 +1,5 @@
 <template>
-  <section v-if="loaded">
+  <section v-if="loaded && config">
     <h3 v-if="!config.user.connected" class="text-center mt-5 text-2xl">{{ config.appName }}</h3>
 
     <template v-if="config.user.connected">
@@ -8,7 +8,7 @@
     <template v-else>
       <div class="grid grid-cols-1 mt-10">
         <div class="col-span-1">
-          <Login :config="config"/>
+          <Login/>
         </div>
       </div>
     </template>
@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import {ref} from "vue"
+import {computed, ref} from "vue"
 import store from "./store/index";
 import {chromeStore, localStore} from "../package/WebStore";
 import chromeAppConfig from "../package/config";
@@ -28,7 +28,10 @@ const isDev = process.env.NODE_ENV === 'development';
 
 // Vue 3 Setup
 function setup() {
-  const config = ref({});
+  const config = ref({
+    user: {connected: false}
+  });
+
   let loaded = ref(false);
 
   // Mock getting config
@@ -46,14 +49,14 @@ function setup() {
     chromeStore.get('config').then(data => {
       if (data) {
         config.value = data
-        store.commit('setConfig', config.value);
+        store.commit('setConfig', data);
       }
 
       loaded.value = true;
     })
   }
 
-  return {config, loaded};
+  return {config: computed(() => store.state.config), loaded};
 }
 
 export default {
