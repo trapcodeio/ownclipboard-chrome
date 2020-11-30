@@ -12,7 +12,7 @@ export const chromeStore = {
                     resolve(data[key] === undefined ? $default : data[key])
                 });
             } else {
-                resolve($default);
+                resolve(localStore.getObject(key));
             }
         })
     },

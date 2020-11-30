@@ -1,12 +1,9 @@
 <template>
   <section v-if="loaded">
-    <h3 class="text-center mt-5 text-2xl">{{ config.appName }}</h3>
-    <h6 v-if="config.user.connected" class="text-center text-green-500">
-      ({{ config.user.connectedData.name }})
-    </h6>
+    <h3 v-if="!config.user.connected" class="text-center mt-5 text-2xl">{{ config.appName }}</h3>
 
     <template v-if="config.user.connected">
-      <Dashboard/>
+      <router-view/>
     </template>
     <template v-else>
       <div class="grid grid-cols-1 mt-10">
@@ -20,6 +17,7 @@
 
 <script>
 import {ref} from "vue"
+import store from "./store/index";
 import {chromeStore, localStore} from "../package/WebStore";
 import chromeAppConfig from "../package/config";
 import Login from "@/components/Login";
@@ -41,10 +39,16 @@ function setup() {
       localStore.setObject('config', chromeAppConfig);
       config.value = chromeAppConfig;
     }
+
     loaded.value = true;
+    store.commit('setConfig', config.value);
   } else {
     chromeStore.get('config').then(data => {
-      if (data) config.value = data;
+      if (data) {
+        config.value = data
+        store.commit('setConfig', config.value);
+      }
+
       loaded.value = true;
     })
   }

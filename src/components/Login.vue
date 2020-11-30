@@ -22,7 +22,7 @@
 
 <script>
 import {ref} from "vue";
-import http from "@/http";
+import http from "../../package/http";
 import LoadingButton from "@/components/LoadingButton";
 import {chromeStore} from "../../package/WebStore";
 
