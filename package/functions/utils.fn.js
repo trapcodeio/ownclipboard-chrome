@@ -10,6 +10,11 @@ export async function loadClipsFromCacheOrServer() {
     }
 }
 
+
+export function loadLocalClips() {
+    return chromeStore.get('localClips');
+}
+
 export async function loadClipsFromServer() {
     const {clips} = await OwnClipboardApi.getClips()
 

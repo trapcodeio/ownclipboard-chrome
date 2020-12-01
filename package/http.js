@@ -1,4 +1,4 @@
-import axios from '../node_modules/axios/index'
+import axios from 'axios'
 
 const http = new axios.create({
     baseURL: 'https://ownclipboard.com/api'

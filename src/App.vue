@@ -1,8 +1,14 @@
 <template>
-  <section v-if="loaded && config">
+  <section class="ocb-chrome" v-if="loaded && config">
     <h3 v-if="!config.user.connected" class="text-center mt-5 text-2xl">{{ config.appName }}</h3>
-
     <template v-if="config.user.connected">
+      <!-- Menu -->
+      <div class="mx-1 mt-2 mb-3">
+        <Menu class="float-left"/>
+        <div class="clear-both"></div>
+      </div>
+
+      <!-- Router View -->
       <router-view/>
     </template>
     <template v-else>
@@ -22,7 +28,8 @@ import {chromeStore, localStore} from "../package/WebStore";
 import chromeAppConfig from "../package/config";
 import Login from "@/components/Login";
 import Busy from "@/components/Busy";
-import Dashboard from "@/Dashboard";
+import Dashboard from "@/Online";
+import Menu from "@/components/Menu";
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -61,7 +68,7 @@ function setup() {
 
 export default {
   name: 'App',
-  components: {Dashboard, Busy, Login},
+  components: {Menu, Dashboard, Busy, Login},
   setup
 }
 </script>

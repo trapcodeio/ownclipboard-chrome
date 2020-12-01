@@ -2,6 +2,7 @@ import { createStore } from 'vuex'
 
 export default createStore({
   state: {
+    isDev: process.env.NODE_ENV === 'development',
     config: null,
   },
   mutations: {

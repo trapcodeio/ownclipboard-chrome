@@ -1,11 +1,17 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import Dashboard from "@/Dashboard";
+import Online from "@/Online";
+import Local from "@/Local";
 
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: Dashboard
+    name: 'local',
+    component: Local
+  },
+  {
+    path: '/online',
+    name: 'online',
+    component: Online
   },
 ]
 

@@ -7,8 +7,37 @@ html, body {
 body {
   width: 500px;
   max-width: 500px;
-  height: 500px;
-  max-height: 500px;
+  height: 550px;
+  max-height: 550px;
 
   @apply text-gray-200 border border-gray-700
+}
+
+.ocb-chrome {
+  .clips {
+    @apply overflow-y-auto;
+    max-height: 400px;
+
+    .clip {
+      @apply cursor-pointer text-gray-400 text-sm bg-gray-900 p-2 rounded mx-3 mt-3;
+      transition: .3s all;
+
+      &:hover {
+        color: #faebd7;
+
+        .meta {
+          @apply block
+        }
+      }
+
+      .meta {
+        @apply hidden;
+      }
+    }
+
+    .refresh-btn {
+      color: unset;
+      @apply text-sm text-red-50;
+    }
+  }
 }

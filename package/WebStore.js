@@ -1,5 +1,4 @@
 import BrowserStorage from "./browser-storage/BrowserStorage.js";
-
 export const localStore = BrowserStorage.getLocalStore();
 
 export const chromeStore = {
@@ -8,7 +7,7 @@ export const chromeStore = {
             // noinspection JSUnresolvedVariable
             if (chrome && chrome.storage) {
                 // noinspection JSUnresolvedVariable
-                chrome.storage.sync.get(key, function (data) {
+                chrome.storage.local.get(key, function (data) {
                     resolve(data[key] === undefined ? $default : data[key])
                 });
             } else {
@@ -23,7 +22,7 @@ export const chromeStore = {
         // noinspection JSUnresolvedVariable
         if (chrome && chrome.storage) {
             // noinspection JSUnresolvedVariable
-            chrome.storage.sync.set(data, run);
+            chrome.storage.local.set(data, run);
         } else {
             const firstKey = Object.keys(data)[0];
             if (firstKey) {
@@ -32,11 +31,18 @@ export const chromeStore = {
             }
         }
     },
+
+    setSync(data){
+        return new Promise((resolve) => {
+            return chromeStore.set(data, resolve);
+        })
+    },
+
     remove(key) {
         // noinspection JSUnresolvedVariable
         if (chrome && chrome.storage) {
             // noinspection JSUnresolvedVariable
-            chrome.storage.sync.remove(key);
+            chrome.storage.local.remove(key);
         } else {
             localStore.remove(key)
         }

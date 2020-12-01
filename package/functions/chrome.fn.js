@@ -13,10 +13,10 @@ export function getter(getter) {
         get current() {
             return getter()
         },
-        hasChanged(){
+        hasChanged() {
             return this.value !== this.current;
         },
-        updateValue(){
+        updateValue() {
             this.value = this.current;
         }
     }
@@ -27,8 +27,23 @@ export function getter(getter) {
  * Get Chrome Config
  * @returns {Promise<unknown>}
  */
-export function getConfig(){
+export function getConfig() {
     return chromeStore.get('config');
+}
+
+
+export function updateConfig(data, config) {
+    return new Promise(async (resolve) => {
+        if (!config) {
+            config = await getConfig();
+        }
+
+        config = window.objectCollection.use(config);
+
+        if (data) config.set(data);
+
+        chromeStore.set({config: config.data}, () => resolve(config.data));
+    })
 }
 
 /**
@@ -47,4 +62,12 @@ export function readClipboard() {
     }
 
     return null;
+}
+
+export function nl2br(str, is_xhtml = false) {
+    if (typeof str === 'undefined' || str === null) {
+        return '';
+    }
+    const breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
+    return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
 }

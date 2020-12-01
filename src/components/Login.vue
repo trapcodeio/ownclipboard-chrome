@@ -25,6 +25,7 @@ import store from "../store/index";
 import http from "../../package/http";
 import LoadingButton from "@/components/LoadingButton";
 import {chromeStore} from "../../package/WebStore";
+import {tellBackground} from "@/frontend";
 
 function setup() {
   const config = computed(() => store.state.config)
@@ -46,6 +47,9 @@ function setup() {
 
           chromeStore.set({config: newConfig});
           store.commit('setConfig', newConfig);
+
+          // Start watching...
+          tellBackground('startWatch');
         })
         .catch(err => err)
         .finally(() => btn.stopLoading());
