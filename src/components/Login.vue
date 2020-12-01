@@ -65,22 +65,3 @@ export default {
   name: 'Login',
 }
 </script>
-
-<style lang="scss" scoped>
-.ocb-chrome-login-form {
-  @apply px-10;
-
-  .control {
-    @apply block;
-
-    input {
-      @apply bg-gray-900 rounded w-full;
-      @apply focus:outline-none focus:ring-gray-500 focus:border-gray-500
-    }
-  }
-
-  .field {
-    @apply my-3;
-  }
-}
-</style>

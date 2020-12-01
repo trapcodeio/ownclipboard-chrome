@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Online from "@/Online";
 import Local from "@/Local";
+import Write from "@/Write";
 
 const routes = [
   {
@@ -12,6 +13,11 @@ const routes = [
     path: '/online',
     name: 'online',
     component: Online
+  },
+  {
+    path: '/write',
+    name: 'write',
+    component: Write
   },
 ]
 

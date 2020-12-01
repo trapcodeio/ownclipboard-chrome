@@ -1,6 +1,9 @@
 <template>
   <div v-if="loaded" class="ocb-chrome-dashboard">
-    <Clips :local="true" :clips="clips"/>
+    <div class="my-3 ml-3 text-gray-500 text-xs">
+      Total: <span class="text-green-500">({{ clips.length }})</span>
+    </div>
+    <Clips style="max-height: 430px" :local="true" :clips="clips"/>
   </div>
 </template>
 

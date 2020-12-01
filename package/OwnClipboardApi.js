@@ -2,7 +2,7 @@ import http from "./http.js";
 import {chromeStore} from "./WebStore.js";
 
 export class OwnClipboardApi {
-    static async getClips(){
+    static async getClips(page){
         const config = await chromeStore.get('config');
         let api_key;
 
@@ -10,6 +10,6 @@ export class OwnClipboardApi {
             api_key = config.user.key;
         }
 
-        return http.get('/all', {params: {api_key}});
+        return http.get('/all', {params: { page, api_key}});
     }
 }

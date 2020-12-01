@@ -3,7 +3,10 @@
     <div class="" v-if="loaded && config">
       <div class="mb-5 mx-3 mt-3">
         <div class="text-xs text-gray-400 mt-2">
-          <span class="float-left">Device: <strong class="text-green-500">{{ config.user.connectedData.name }}</strong></span>
+          <span class="float-left">
+            Device: <strong class="text-green-500 mr-2">{{ config.user.connectedData.name }}</strong>
+            Total: <span class="text-green-500">({{clips.total}})</span>
+          </span>
 
           <span class="float-right"> Last Refreshed: <TimeAgo class="text-xs text-green-500"
                                                               :date="clips.date"/></span>
@@ -32,6 +35,7 @@
         </div>
       </div>
       <ClipsList :clips="clips"/>
+      <Pagination v-model="page" class="mt-3" :data="clips"/>
     </div>
     <Busy v-else message="Fetching clips" class="text-gray-500"/>
   </div>
@@ -42,6 +46,7 @@ import {computed, ref} from "vue";
 import store from "./store/index";
 import {loadClipsFromCacheOrServer, loadClipsFromServer} from "../package/functions/utils.fn";
 import ClipsList from "@/components/Clips";
+import Pagination from "@/components/Pagination";
 
 function setup() {
   const loaded = ref(false);
@@ -68,13 +73,31 @@ function setup() {
 
 export default {
   name: 'Online',
-  components: {ClipsList},
+  components: {Pagination, ClipsList},
   setup,
+
   data() {
     return {
       copied: false,
       copiedTimeOut: 0,
       isRefreshing: false
+    }
+  },
+
+  computed: {
+    page() {
+      return this.$route.query.page;
+    }
+  },
+
+  watch: {
+    page(page) {
+      console.log(`Page changed to ${page}`)
+      this.loaded = false;
+      loadClipsFromServer(page).then((clips) => {
+        if (clips) this.clips = clips;
+        this.loaded = true;
+      })
     }
   },
   methods: {

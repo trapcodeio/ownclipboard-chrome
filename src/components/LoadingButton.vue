@@ -98,7 +98,7 @@ export default {
 
 <style scoped>
 .loading-button {
-  @apply py-2 px-4 rounded-sm text-white;
+  @apply py-2 px-4 rounded-sm;
   @apply focus:outline-none;
 }
 </style>

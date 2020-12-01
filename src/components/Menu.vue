@@ -7,10 +7,10 @@
       <router-link exact-active-class="active" :to="{name: 'online'}" class="menu-link">
         Online
       </router-link>
-<!--      <a href="#" class="menu-link">-->
-<!--        Settings-->
-<!--      </a>-->
-      <a @click.prevent="logout" class="menu-link">
+      <router-link v-if="config?.user.connected" exact-active-class="active" :to="{name: 'write'}" class="menu-link">
+        Write
+      </router-link>
+      <a v-if="config?.user.connected" @click.prevent="logout" class="menu-link">
         <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"
              xmlns="http://www.w3.org/2000/svg">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -25,8 +25,12 @@
 import {chromeStore} from "../../package/WebStore";
 import config from "../../package/config";
 import store from "@/store";
+import {mapState} from "vuex";
 
 export default {
+  computed: {
+    ...mapState(['config'])
+  },
   methods: {
     logout() {
       chromeStore.remove('clips');

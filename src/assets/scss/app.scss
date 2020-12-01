@@ -7,16 +7,16 @@ html, body {
 body {
   width: 500px;
   max-width: 500px;
-  height: 550px;
-  max-height: 550px;
+  height: 530px;
+  max-height: 530px;
 
-  @apply text-gray-200 border border-gray-700
+  @apply text-gray-200 border border-gray-700 pb-10;
 }
 
 .ocb-chrome {
   .clips {
     @apply overflow-y-auto;
-    max-height: 400px;
+    max-height: 350px;
 
     .clip {
       @apply cursor-pointer text-gray-400 text-sm bg-gray-900 p-2 rounded mx-3 mt-3;
@@ -39,5 +39,27 @@ body {
       color: unset;
       @apply text-sm text-red-50;
     }
+  }
+
+  .ocb-chrome-login-form {
+    @apply px-10;
+
+    .control {
+      @apply block;
+
+      input {
+        @apply bg-gray-900 rounded w-full;
+        @apply focus:outline-none focus:ring-gray-500 focus:border-gray-500
+      }
+    }
+
+    .field {
+      @apply my-3;
+    }
+  }
+
+  .write-textarea {
+    @apply bg-gray-900 border-0 w-full rounded;
+    @apply focus:outline-none focus:ring-gray-700 focus:border-gray-500
   }
 }

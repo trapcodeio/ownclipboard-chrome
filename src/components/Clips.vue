@@ -13,10 +13,17 @@
               <a @click.prevent="viewClip(clipId)" class="text-green-600 hover:text-green-300"><span>view</span></a>
             </div>
             <div class="float-right space-x-3">
-              <a v-if="local" @click.prevent="syncClip(clipId)"
-                 class="text-green-600 hover:text-green-300">
-                <span>sync</span>
-              </a>
+              <template v-if="local">
+                <a v-if="isSyncing===clipId"
+                   class="text-gray-600">
+                  <span>syncing</span>
+                </a>
+                <a v-else @click.prevent="syncClip(clipId)"
+                   class="text-green-600 hover:text-green-300">
+                  <span>sync</span>
+                </a>
+              </template>
+
 
               <a @click.prevent="deleteClip(clipId)"
                  class="text-red-300 hover:text-red-600">
@@ -32,7 +39,7 @@
             </div>
             <div class="clear-both"></div>
           </div>
-          <h6 v-if="synced===clipId"  class="text-xs text-center capitalize text-green-300">#Synced
+          <h6 v-if="synced===clipId" class="text-xs text-center capitalize text-green-300">#Synced
             successfully!</h6>
         </div>
       </template>
@@ -137,20 +144,25 @@ export default {
 
     syncClip(clipId) {
       const clip = this.computedClips[clipId];
-      if (clip) {
+      if (!this.isSyncing && clip) {
+        this.isSyncing = clipId;
+
         http.post('add', {
           api_key: this.config?.user.key,
           content: clip.content
         }).then(() => {
           loadClipsFromServer().then(() => {
+            this.isSyncing = false;
+            this.synced = clipId;
+
 
             clearTimeout(this.syncedTimeOut);
             this.syncedTimeOut = setTimeout(() => {
-              this.synced = false
+              this.synced = false;
             }, 5000);
 
-          }).catch(e => e)
-        }).catch(e => e)
+          }).catch(() => this.isSyncing = false)
+        }).catch(() => this.isSyncing = false)
       }
     },
 

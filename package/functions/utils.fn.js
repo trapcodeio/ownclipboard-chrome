@@ -15,8 +15,8 @@ export function loadLocalClips() {
     return chromeStore.get('localClips');
 }
 
-export async function loadClipsFromServer() {
-    const {clips} = await OwnClipboardApi.getClips()
+export async function loadClipsFromServer(page) {
+    const {clips} = await OwnClipboardApi.getClips(page)
 
     if (clips) {
         clips.date = new Date().toISOString();

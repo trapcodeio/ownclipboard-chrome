@@ -74,6 +74,10 @@ async function clipBoardHasChanged() {
     const localClips = await chromeStore.get('localClips');
     let data = localClips ? localClips : [];
 
+    if(data.length >= 50){
+        data.pop();
+    }
+
     // Check if clip exists in local
     const existingContentIndex = _.findIndex(data, d => d.content === clip);
 
