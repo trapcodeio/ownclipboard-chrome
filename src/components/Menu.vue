@@ -7,6 +7,9 @@
       <router-link exact-active-class="active" :to="{name: 'online'}" class="menu-link">
         Online
       </router-link>
+      <router-link exact-active-class="active" :to="{name: 'fav'}" class="menu-link">
+        Fav
+      </router-link>
       <router-link v-if="config?.user.connected" exact-active-class="active" :to="{name: 'write'}" class="menu-link">
         Write
       </router-link>

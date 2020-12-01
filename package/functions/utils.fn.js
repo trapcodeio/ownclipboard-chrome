@@ -15,6 +15,10 @@ export function loadLocalClips() {
     return chromeStore.get('localClips');
 }
 
+export function loadFavClips() {
+    return chromeStore.get('favClips');
+}
+
 export async function loadClipsFromServer(page) {
     const {clips} = await OwnClipboardApi.getClips(page)
 

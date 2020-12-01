@@ -13,6 +13,7 @@ window._ = window.objectCollection.getLodash();
 chrome.runtime.onInstalled.addListener(async function () {
     const oldConfig = await chromeStore.get('config');
     const localClips = await chromeStore.get('localClips');
+    const favClips = await chromeStore.get('favClips');
 
     if (!oldConfig) {
         await chromeStore.setSync({config})
@@ -20,6 +21,10 @@ chrome.runtime.onInstalled.addListener(async function () {
 
     if(!localClips){
         await chromeStore.setSync({localClips: []})
+    }
+
+    if(!favClips){
+        await chromeStore.setSync({favClips: []})
     }
 
     // Start Main Function.

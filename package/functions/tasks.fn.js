@@ -19,13 +19,13 @@ export function listenForEvents() {
         const fromExtension = sender.tab === undefined;
 
         if (fromExtension)
-            parseEventRequest(request, sendResponse).catch(console.error);
+            parseEventRequest(request, sendResponse)
     });
 }
 
-export async function parseEventRequest(request, reply) {
+export function parseEventRequest(request, reply) {
     if (!request || (request && !request.action)) return;
     if (!EventsController[request.action]) return;
 
-    await EventsController[request.action](request.data, reply);
+    EventsController[request.action](request.data, reply);
 }
