@@ -23,3 +23,5 @@ pnpm-debug.log*
 *.sw?
 package/public
 .env
+package.crx
+package.pem

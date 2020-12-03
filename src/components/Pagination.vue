@@ -2,9 +2,17 @@
   <section v-if="data.total>data.perPage">
     <nav class="pagination" role="navigation" aria-label="pagination">
       <div class="space-x-2 float-right">
-        <a :disabled="data.page===1" @click.prevent="openPage(data.page-1)" class="pagination-previous">Previous</a>
-        <a :disabled="data.page===data.lastPage" @click.prevent="openPage(data.page+1)" class="pagination-next">Next
-          page</a>
+        <a title="Previous Page" :disabled="data.page===1" @click.prevent="openPage(data.page-1)" class="pagination-previous">
+          <svg class="w-6 h-6 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+          </svg>
+        </a>
+        <a title="Next Page" :disabled="data.page===data.lastPage" @click.prevent="openPage(data.page+1)" class="pagination-next">
+          <svg class="w-6 h-6 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+               xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+          </svg>
+        </a>
       </div>
       <div class="pagination-list float-left space-x-2">
         <template v-if="data.page>3">
@@ -43,23 +51,23 @@
 export default {
   model: {
     prop: 'page',
-    event: 'update-page'
+    event: 'update-page',
   },
   props: {
     page: {type: Number, default: 1},
     data: {
       type: Object,
       default: () => {
-        return {}
-      }
+        return {};
+      },
     },
     name: {
       type: String,
-      default: 'page'
-    }
+      default: 'page',
+    },
   },
   data() {
-    return {}
+    return {};
   },
   computed: {
     pagesArray() {
@@ -75,17 +83,17 @@ export default {
         i++;
       }
       return lists;
-    }
+    },
   },
   methods: {
     openPage(page) {
       if (page >= 1) {
         const query = {...this.$route.query, page};
-        this.$router.push({name: this.$route.name, query})
+        this.$router.push({name: this.$route.name, query});
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>

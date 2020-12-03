@@ -1,19 +1,12 @@
-# ownclipboard-chrome
+# OwnClipboard Chrome Extension
 
-## Project setup
-```
-yarn install
-```
+Official Chrome extension for OwnClipboard, To be out on the chrome web store very soon.
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
+To load unpacked extension, unzip **package-built.zip** file and load the folder it from your chrome extensions page.
 
-### Compiles and minifies for production
-```
-yarn build
-```
+Note: You must have developer mode enabled in chrome.
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+#### Coming soon
+1. Option to use your own host.
+2. Search Local/Online clips.
+3. Option to clear clips on logout.

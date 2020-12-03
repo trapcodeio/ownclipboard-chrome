@@ -1,10 +1,7 @@
 <template>
-  <div class="space-x-4 text-center mt-2">
-    <input ref="pin_a" v-model="pins.a" maxlength="1" :type="showPassword? 'text':'password'" class="pin-box">
-    <input ref="pin_b" v-model="pins.b" maxlength="1" :type="showPassword? 'text':'password'" class="pin-box">
-    <input ref="pin_c" v-model="pins.c" maxlength="1" :type="showPassword? 'text':'password'" class="pin-box">
-    <input ref="pin_d" v-model="pins.d" maxlength="1" :type="showPassword? 'text':'password'" class="pin-box">
-    <a href="#" ref="eye" @click.prevent="showPassword=!showPassword" class="inline-block text-gray-500 hover:text-green-500">
+  <div title="Toggle Visibility" class="space-x-4 text-center mt-2">
+    <a href="#" ref="eye" @click.prevent="showPassword=!showPassword"
+       class="inline-block text-gray-500 hover:text-green-500 focus:outline-none">
       <svg v-if="showPassword" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
            xmlns="http://www.w3.org/2000/svg">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -18,11 +15,28 @@
               d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
       </svg>
     </a>
+    <input :disabled="disabled" ref="pin_a" v-model="pins.a" maxlength="1" :type="showPassword? 'text':'password'"
+           class="pin-box">
+    <input :disabled="disabled" ref="pin_b" v-model="pins.b" maxlength="1" :type="showPassword? 'text':'password'"
+           class="pin-box">
+    <input :disabled="disabled" ref="pin_c" v-model="pins.c" maxlength="1" :type="showPassword? 'text':'password'"
+           class="pin-box">
+    <input :disabled="disabled" ref="pin_d" v-model="pins.d" maxlength="1" :type="showPassword? 'text':'password'"
+           class="pin-box">
+    <a title="Clear" href="#" ref="clear"
+       @click.prevent="pins={a: null, b: null, c: null, d: null}"
+       class="inline-block text-gray-500 hover:text-green-500 focus:outline-none">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2h-8.172a2 2 0 00-1.414.586L3 12z"></path>
+      </svg>
+    </a>
   </div>
 </template>
 <script>
 export default {
   name: 'Pin',
+  props: ['disabled', 'clear', 'focus'],
   data() {
     return {
       showPassword: false,
@@ -30,6 +44,13 @@ export default {
     };
   },
   watch: {
+    clear(newValue, oldValue) {
+      if (newValue === true && oldValue === false) {
+        this.pins = {a: null, b: null, c: null, d: null};
+        this.$refs.pin_a.focus();
+      }
+    },
+
     'pins.a'() {
       if (this.pins.a && this.pins.a.length === 1) {
         this.$refs?.pin_b.focus();
@@ -56,15 +77,31 @@ export default {
     },
   },
 
-  methods: {
-    updateModelValue(){
-      this.$emit('update:modelValue', Object.values(this.pins).join(''));
+  computed: {
+    computedPins() {
+      return Object.values(this.pins).join('');
+    },
+  },
+
+  mounted() {
+    if (this.focus && this.$refs.pin_a) {
+      this.$refs.pin_a.focus();
     }
-  }
+  },
+
+  methods: {
+    updateModelValue() {
+      this.$emit('update:modelValue', this.computedPins);
+    },
+  },
 };
 </script>
-<style>
+<style scoped lang="scss">
 .pin-box {
-  @apply w-10 rounded bg-gray-900 inline-block focus:outline-none focus:ring-green-500 focus:border-green-500;
+  @apply w-10 rounded border-gray-700 bg-gray-900 inline-block focus:outline-none focus:ring-green-500 focus:border-green-500;
+
+  &:disabled {
+    @apply bg-green-900 text-white;
+  }
 }
 </style>
