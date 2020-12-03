@@ -102,12 +102,16 @@ export default {
 
   methods: {
     saveSettings(btn) {
-      const config = this.config;
+      const config = Object.assign({}, this.config);
 
       config.clips = this.form.clips;
       config.pin = this.form.pin;
 
-      if (!config.pin.enabled) {
+      if (config.pin.enabled) {
+        if (config.pin.secret && config.pin.secret.length !== 4) {
+          return btn.stopLoading();
+        }
+      } else {
         config.pin.secret = null;
       }
 
