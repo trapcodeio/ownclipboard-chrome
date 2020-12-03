@@ -1,5 +1,5 @@
 {
-  "name": "OwnClipboard.com",
+  "name": "OwnClipboard",
   "version": "1.0",
   "description": "OwnClipboard.com Chrome Extension",
   "manifest_version": 2,
@@ -19,7 +19,7 @@
     "tabs"
   ],
   "browser_action": {
-    "default_title": "OwnClipboard",
+    "default_title": "OwnClipboard", 
     "default_popup": "public/index.html",
     "default_icon": {
       "16": "icons/favicon-16x16.png",

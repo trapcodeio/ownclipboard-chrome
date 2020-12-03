@@ -45,8 +45,8 @@
 
 <script>
 import LoadingButton from "@/components/LoadingButton";
-import http from "../package/http";
-import {loadClipsFromServer} from "../package/functions/utils.fn";
+import http from "../../package/http";
+import {loadClipsFromServer} from "../../package/functions/utils.fn";
 import {mapState} from "vuex";
 
 export default {

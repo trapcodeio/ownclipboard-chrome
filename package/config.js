@@ -10,5 +10,12 @@ export default {
     clips: {
         watch: false,
         interval: 2,
+    },
+    pin: {
+        enabled: false,
+        secret: null
+    },
+    perPage: {
+        local: 50,
     }
 }

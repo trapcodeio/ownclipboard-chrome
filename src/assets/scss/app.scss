@@ -62,4 +62,29 @@ body {
     @apply bg-gray-900 border-0 w-full rounded;
     @apply focus:outline-none focus:ring-gray-700 focus:border-gray-500
   }
+
+  .ocb-chrome-toggle {
+    @apply relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500;
+
+    .toggle {
+      @apply inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200;
+    }
+
+    &.on {
+      @apply bg-green-600;
+
+      .toggle {
+        @apply translate-x-5;
+      }
+    }
+
+    &.off {
+      @apply bg-gray-900;
+      .toggle {
+        @apply translate-x-0;
+      }
+    }
+  }
+
+
 }

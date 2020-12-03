@@ -9,23 +9,25 @@ export function listenForEvent(event, run) {
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (request && request.action === event) {
             run(request.data ? request.data : {}, sendResponse);
+            return true;
         }
     });
 }
 
-export function listenForEvents() {
+export function listenForEvents(events) {
+    const hasEvents = events && typeof events === "object" && Object.keys(events).length;
     // noinspection JSUnresolvedVariable
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-        const fromExtension = sender.tab === undefined;
+        if (!request || (request && !request.action)) return;
 
-        if (fromExtension)
-            parseEventRequest(request, sendResponse)
+        if (hasEvents) {
+            if (Object.keys(events).includes(request.action)) {
+                events[request.action](request.data, sendResponse);
+                return
+            }
+        }
+
+        if (!EventsController[request.action]) return;
+        EventsController[request.action](request.data, sendResponse);
     });
-}
-
-export function parseEventRequest(request, reply) {
-    if (!request || (request && !request.action)) return;
-    if (!EventsController[request.action]) return;
-
-    EventsController[request.action](request.data, reply);
 }

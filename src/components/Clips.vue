@@ -28,7 +28,7 @@
                 </a>
               </template>
 
-              <a v-if="false" title="Favorite clip." @click.prevent="favClip(clipId)"
+              <a v-if="!clip.favorite" title="Favorite clip." @click.prevent="favClip(clipId)"
                  class="text-green-600 hover:text-green-300">
                 <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                      xmlns="http://www.w3.org/2000/svg">
@@ -54,7 +54,7 @@
           </div>
           <h6 v-if="synced===clipId" class="text-xs text-center capitalize text-green-300">#Synced
             successfully!</h6>
-          <h6 v-if="favorited===clipId" class="text-xs text-center capitalize text-green-300">#Favorited
+          <h6 v-if="favorite===clipId" class="text-xs text-center capitalize text-green-300">#Favorited
             successfully!</h6>
         </div>
       </template>
@@ -110,7 +110,7 @@ export default {
       isSyncing: false,
       syncedTimeOut: 0,
       synced: false,
-      favorited: false,
+      favorite: false,
     }
   },
 
@@ -168,7 +168,7 @@ export default {
           api_key: this.config?.user.key,
           content: clip.content
         }).then(() => {
-          loadClipsFromServer().then(() => {
+          loadClipsFromServer(this.$route.query.page).then(() => {
             this.isSyncing = false;
             this.synced = clipId;
 
@@ -214,24 +214,21 @@ export default {
             api_key: this.config?.user.key,
             clip: clip.code
           }
+        }).then(() =>{
+          loadClipsFromServer(this.$route.query.page)
         })
-        tellBackground('deleteOnlineClip', {clip})
       }
     },
 
     favClip(clipId) {
       const clip = this.computedClips[clipId];
-      tellBackground('favClip', {clip}, (added) => {
-        console.log('added', added)
-        if(added) {
-          this.favorited = clipId;
-          clearTimeout(this.syncedTimeOut);
-          this.syncedTimeOut = setTimeout(() => {
-            this.favorited = false;
-          }, 5000);
-        }
-      });
-    }
+      tellBackground('favClip', {clip});
+      this.favorite = clipId;
+      clearTimeout(this.syncedTimeOut);
+      this.syncedTimeOut = setTimeout(() => {
+        this.favorite = false;
+      }, 5000);
+    },
   },
 }
 </script>

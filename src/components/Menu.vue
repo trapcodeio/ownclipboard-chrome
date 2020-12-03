@@ -13,6 +13,13 @@
       <router-link v-if="config?.user.connected" exact-active-class="active" :to="{name: 'write'}" class="menu-link">
         Write
       </router-link>
+      <router-link v-if="config?.user.connected" exact-active-class="active" :to="{name: 'settings'}" class="menu-link">
+        <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+             xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+        </svg>
+      </router-link>
       <a v-if="config?.user.connected" @click.prevent="logout" class="menu-link">
         <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"
              xmlns="http://www.w3.org/2000/svg">
@@ -25,23 +32,34 @@
 </template>
 
 <script>
-import {chromeStore} from "../../package/WebStore";
-import config from "../../package/config";
-import store from "@/store";
-import {mapState} from "vuex";
+import {chromeStore} from '../../package/WebStore';
+import config from '../../package/config';
+import store from '@/store';
+import {mapState} from 'vuex';
+import {tellBackground} from '@/frontend';
 
 export default {
   computed: {
-    ...mapState(['config'])
+    ...mapState(['config']),
   },
   methods: {
     logout() {
-      chromeStore.remove('clips');
-      chromeStore.set({config});
-      store.commit('setConfig', config);
-    }
-  }
-}
+      let storeConfig = this.config;
+
+      if (storeConfig.pin.enabled) {
+        storeConfig.user.connected = false;
+      } else {
+        storeConfig = config;
+        chromeStore.remove('clips');
+      }
+
+      chromeStore.set({config: storeConfig}, () => {
+        store.commit('setConfig', storeConfig);
+        tellBackground('stopWatching');
+      });
+    },
+  },
+};
 </script>
 
 <style lang="scss">
@@ -49,6 +67,7 @@ export default {
   @apply ml-1 bg-gray-900 rounded;
 
   .menu-link.active {
+    transition: background-color .3s ease-in-out;
     @apply font-medium bg-green-800;
   }
 

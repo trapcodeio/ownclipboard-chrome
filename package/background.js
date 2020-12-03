@@ -5,12 +5,14 @@
 'use strict';
 import config from "./config.js";
 import {chromeStore} from "./WebStore.js";
-import {main} from "./Main.js";
+import {checkDaemon, main, startWatch, stopWatching} from "./Main.js";
+import {listenForEvents} from "./functions/tasks.fn.js";
+
 window._ = window.objectCollection.getLodash();
 
 
-// noinspection JSUnresolvedVariable
-chrome.runtime.onInstalled.addListener(async function () {
+// On Installed function
+async function onInstalled() {
     const oldConfig = await chromeStore.get('config');
     const localClips = await chromeStore.get('localClips');
     const favClips = await chromeStore.get('favClips');
@@ -19,14 +21,26 @@ chrome.runtime.onInstalled.addListener(async function () {
         await chromeStore.setSync({config})
     }
 
-    if(!localClips){
+    if (!localClips) {
         await chromeStore.setSync({localClips: []})
     }
 
-    if(!favClips){
+    if (!favClips) {
         await chromeStore.setSync({favClips: []})
     }
+}
 
-    // Start Main Function.
-    main().catch(console.error);
+// noinspection JSUnresolvedVariable
+chrome.runtime.onInstalled.addListener(function () {
+    onInstalled().then(main).catch(console.error);
+});
+
+// Check if daemon is running..
+checkDaemon().catch(console.error);
+
+// Listen for other events
+listenForEvents({
+    startWatch,
+    stopWatching,
+    checkDaemon
 });

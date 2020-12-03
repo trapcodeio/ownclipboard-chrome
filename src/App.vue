@@ -28,8 +28,9 @@ import {chromeStore, localStore} from "../package/WebStore";
 import chromeAppConfig from "../package/config";
 import Login from "@/components/Login";
 import Busy from "@/components/Busy";
-import Dashboard from "@/Online";
+import Dashboard from "@/views/Online";
 import Menu from "@/components/Menu";
+import {tellBackground} from "@/frontend";
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -44,6 +45,7 @@ function setup() {
   // Mock getting config
   if (isDev) {
     if (localStore.has('config')) {
+      // noinspection JSValidateTypes
       config.value = localStore.getObject('config', chromeAppConfig);
     } else {
       localStore.setObject('config', chromeAppConfig);
@@ -58,6 +60,8 @@ function setup() {
         config.value = data
         store.commit('setConfig', data);
       }
+
+      tellBackground('checkDaemon')
 
       loaded.value = true;
     })

@@ -43,8 +43,8 @@
 
 <script>
 import {computed, ref} from "vue";
-import store from "./store/index";
-import {loadClipsFromCacheOrServer, loadClipsFromServer} from "../package/functions/utils.fn";
+import store from "../store";
+import {loadClipsFromCacheOrServer, loadClipsFromServer} from "../../package/functions/utils.fn";
 import ClipsList from "@/components/Clips";
 import Pagination from "@/components/Pagination";
 
