@@ -53,7 +53,7 @@ export async function startWatch() {
   keepWatching = true;
   watchClipboard(config.clips.interval);
   
-  console.log('Now watching!');
+  // console.log('Now watching!');
 }
 
 export async function stopWatching() {
@@ -64,7 +64,7 @@ export async function stopWatching() {
     'clips.watch': false,
   });
   
-  console.log('Stopped watching.');
+  // console.log('Stopped watching.');
 }
 
 export function watchClipboard(interval) {
@@ -126,5 +126,5 @@ export async function clipBoardHasChanged() {
   }
   
   // Save new data to local store.
-  await chromeStore.setSync({localClips: data});
+  await chromeStore.setAsync({localClips: data});
 }

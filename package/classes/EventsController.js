@@ -48,7 +48,7 @@ export default {
             favClips.unshift(clip)
 
             // Save new data to local store.
-            await chromeStore.setSync({favClips});
+            await chromeStore.setAsync({favClips});
         }
     }
 }
