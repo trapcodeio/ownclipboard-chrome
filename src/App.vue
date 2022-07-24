@@ -21,58 +21,47 @@
   </section>
 </template>
 
-<script>
+<script lang="ts" setup>
 import { computed, ref } from "vue";
 import store from "./store/index";
 import { chromeStore, localStore } from "../package/WebStore";
 import chromeAppConfig from "../package/config";
 import Login from "./components/Login.vue";
-import Busy from "./components/Busy.vue";
-import Dashboard from "./views/Online.vue";
 import Menu from "./components/Menu.vue";
-import { tellBackground } from "./frontend";
-
-const isDev = process.env.NODE_ENV === "development";
+import { isDev, tellBackground } from "./frontend";
 
 // Vue 3 Setup
-function setup() {
-  const config = ref({
-    user: { connected: false }
-  });
 
-  let loaded = ref(false);
+const config = computed(() => store.state.config);
 
-  // Mock getting config
-  if (isDev) {
-    if (localStore.has("config")) {
-      // noinspection JSValidateTypes
-      config.value = localStore.getObject("config", chromeAppConfig);
-    } else {
-      localStore.setObject("config", chromeAppConfig);
-      config.value = chromeAppConfig;
-    }
+const $config = ref<any>({
+  user: { connected: false }
+});
 
-    loaded.value = true;
-    store.commit("setConfig", config.value);
+let loaded = ref(false);
+
+// Mock getting config
+if (isDev) {
+  if (localStore.has("config")) {
+    // noinspection JSValidateTypes
+    $config.value = localStore.getObject("config", chromeAppConfig as any);
   } else {
-    chromeStore.get("config").then((data) => {
-      if (data) {
-        config.value = data;
-        store.commit("setConfig", data);
-      }
-
-      tellBackground("checkDaemon");
-
-      loaded.value = true;
-    });
+    localStore.setObject("config", chromeAppConfig);
+    $config.value = chromeAppConfig;
   }
 
-  return { config: computed(() => store.state.config), loaded };
-}
+  loaded.value = true;
+  store.commit("setConfig", $config.value);
+} else {
+  chromeStore.get("config").then((data) => {
+    if (data) {
+      $config.value = data;
+      store.commit("setConfig", data);
+    }
 
-export default {
-  name: "App",
-  components: { Menu, Dashboard, Busy, Login },
-  setup
-};
+    tellBackground("checkDaemon");
+
+    loaded.value = true;
+  });
+}
 </script>

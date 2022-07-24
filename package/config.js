@@ -1,5 +1,3 @@
-export const isDev = import.meta.env.DEV;
-
 export default {
   appName: "OwnClipboard",
   defaultApiHost: "https://ownclipboard.com",

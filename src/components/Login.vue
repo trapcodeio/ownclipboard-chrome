@@ -39,7 +39,6 @@ function setup() {
 
   let form = ref({
     host: config.value["customApiHost"] || config.value["defaultApiHost"],
-    // host: "http://localhost:3002",
     apiKey: null
   });
 
