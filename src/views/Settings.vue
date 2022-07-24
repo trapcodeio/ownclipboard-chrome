@@ -5,31 +5,40 @@
         <div class="form">
           <span class="float-left text-green-400 text-sm">Auto Watch</span>
           <div class="float-right">
-            <Toggle v-model="form.clips.watch"/>
+            <Toggle v-model="form.clips.watch" />
           </div>
           <div class="clear-both"></div>
-          <p class="help text-sm text-gray-400">If disabled, OwnClipboard won't watch your local clipboard for changes.
-            You only get to see the current item in your clipboard but not all items copied while auto watch is
-            disabled.</p>
+          <p class="help text-sm text-gray-400">
+            If disabled, OwnClipboard won't watch your local clipboard for changes. You only get to
+            see the current item in your clipboard but not all items copied while auto watch is
+            disabled.
+          </p>
         </div>
 
         <div class="form">
           <div class="grid grid-cols-2">
             <div class="col-span-1">
               <label class="text-green-400 text-sm">Watch Interval</label>
-              <select v-model="form.clips.interval"
-                      class="mt-1 block bg-gray-900 text-gray-200 pl-3 pr-10 py-2 text-base border-gray-800 focus:outline-none focus:ring-gray-800 focus:border-gray-800 sm:text-sm rounded-md">
+              <select
+                v-model="form.clips.interval"
+                class="mt-1 block bg-gray-900 text-gray-200 pl-3 pr-10 py-2 text-base border-gray-800 focus:outline-none focus:ring-gray-800 focus:border-gray-800 sm:text-sm rounded-md"
+              >
                 <option v-for="interval in intervals" :value="interval">
-                  <template v-if="interval===2">RealTime</template>
-                  <template v-else-if="interval===60">Every 1 minute</template>
+                  <template v-if="interval === 2">RealTime</template>
+                  <template v-else-if="interval === 60">Every 1 minute</template>
                   <template v-else>Every {{ interval }} seconds</template>
                 </option>
               </select>
             </div>
             <div class="col-span-1">
               <label class="block text-green-400 text-sm mt-1">Local Clips Max Storage.</label>
-              <input v-model="form.perPage.local" type="number" min="10" max="200"
-                     class="text-white w-32 bg-gray-900 border-gray-800 focus:outline-none focus:ring-gray-800 focus:border-gray-800 sm:text-sm rounded-md">
+              <input
+                v-model="form.perPage.local"
+                type="number"
+                min="10"
+                max="200"
+                class="text-white w-32 bg-gray-900 border-gray-800 focus:outline-none focus:ring-gray-800 focus:border-gray-800 sm:text-sm rounded-md"
+              />
             </div>
           </div>
         </div>
@@ -37,17 +46,21 @@
         <div class="form">
           <span class="float-left text-green-400 text-sm">Use Pin</span>
           <div class="float-right">
-            <Toggle v-model="form.pin.enabled"/>
+            <Toggle v-model="form.pin.enabled" />
           </div>
           <div class="clear-both"></div>
-          <p class="help text-sm text-gray-400">If enabled, your api key will be stored when you log out and re-used if
-            you enter the right pin when logging in.</p>
+          <p class="help text-sm text-gray-400">
+            If enabled, your api key will be stored when you log out and re-used if you enter the
+            right pin when logging in.
+          </p>
         </div>
 
         <div v-if="form.pin.enabled" class="form">
-          <label v-if="config.pin.secret" class="text-sm block text-center font-bold text-red-500">CHANGE PIN</label>
+          <label v-if="config.pin.secret" class="text-sm block text-center font-bold text-red-500"
+            >CHANGE PIN</label
+          >
           <label v-else class="text-sm block text-center font-bold text-green-500">PIN</label>
-          <Pin v-model="form.pin.secret"/>
+          <Pin v-model="form.pin.secret" />
         </div>
       </div>
       <div class="mt-8 text-center">
@@ -56,40 +69,38 @@
       </div>
     </template>
     <template v-else>
-      <h6 class="text-gray-400 mt-10 mb-3 text-center">
-        Pin is required to modify settings.
-      </h6>
-      <EnterPin :on-success="() => pinAuth = true"></EnterPin>
+      <h6 class="text-gray-400 mt-10 mb-3 text-center">Pin is required to modify settings.</h6>
+      <EnterPin :on-success="() => (pinAuth = true)"></EnterPin>
     </template>
   </div>
 </template>
 
 <script>
-import Toggle from '@/components/Toggle';
-import {mapState} from 'vuex';
-import {chromeStore} from '../../package/WebStore';
-import Pin from '@/views/Pin';
-import EnterPin from '@/components/EnterPin';
+import Toggle from "../components/Toggle.vue";
+import { mapState } from "vuex";
+import { chromeStore } from "../../package/WebStore";
+import Pin from "../views/Pin.vue";
+import EnterPin from "../components/EnterPin.vue";
 
 export default {
-  name: 'Settings',
-  components: {EnterPin, Pin, Toggle},
+  name: "Settings",
+  components: { EnterPin, Pin, Toggle },
   data() {
     return {
       pinAuth: false,
       form: {
-        clips: {watch: false, interval: 2},
-        pin: {enabled: false, secret: null},
-        perPage: {local: 50},
+        clips: { watch: false, interval: 2 },
+        pin: { enabled: false, secret: null },
+        perPage: { local: 50 }
       },
       intervals: [2, 5, 10, 20, 30, 60],
       saved: false,
-      timeout: 0,
+      timeout: 0
     };
   },
 
   computed: {
-    ...mapState(['config']),
+    ...mapState(["config"])
   },
 
   mounted() {
@@ -125,16 +136,15 @@ export default {
       config.perPage.local = localLimit;
       this.form.perPage.local = localLimit;
 
-      chromeStore.set({config}, () => {
+      chromeStore.set({ config }, () => {
         this.pinAuth = true;
-        this.$store.commit('setConfig', config);
+        this.$store.commit("setConfig", config);
         this.saved = true;
         clearTimeout(this.timeout);
-        setTimeout(() => this.saved = false, 2000);
+        setTimeout(() => (this.saved = false), 2000);
         btn.stopLoading();
       });
-    },
-  },
+    }
+  }
 };
 </script>
-

@@ -1,5 +1,8 @@
 module.exports = {
-    globals: {
-        chrome: "readonly"
-    }
-}
+  env: {
+    es2021: true
+  },
+  globals: {
+    chrome: "readonly"
+  }
+};

@@ -31,8 +31,8 @@ import { computed, ref } from "vue";
 import store from "../store/index";
 import http, { axios } from "../../package/http";
 import { chromeStore } from "../../package/WebStore";
-import { tellBackground } from "@/frontend";
-import EnterPin from "@/components/EnterPin";
+import { tellBackground } from "../frontend";
+import EnterPin from "../components/EnterPin.vue";
 
 function setup() {
   const config = computed(() => store.state.config);

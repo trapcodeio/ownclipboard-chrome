@@ -3,31 +3,27 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve --port 4111",
-    "build": "vue-cli-service build"
+    "dev": "vite --port 4111",
+    "build": "vite build",
+    "serve": "vite preview"
   },
   "dependencies": {
-    "core-js": "^3.6.5",
+    "@vitejs/plugin-vue": "^3.0.1",
     "timeago.js": "^4.0.2",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0"
   },
   "devDependencies": {
-    "@tailwindcss/forms": "^0.2.1",
+    "@tailwindcss/forms": "^0.5.2",
     "@trapcode/browser-storage": "^0.0.7",
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-router": "~4.5.0",
-    "@vue/cli-plugin-vuex": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.0",
     "autoprefixer": "^9",
     "axios": "^0.21.0",
-    "postcss": "^7",
+    "postcss": "^8.4.14",
     "prettier": "^2.7.1",
     "sass": "^1.26.5",
-    "sass-loader": "^8.0.2",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat",
-    "vue-cli-plugin-tailwind": "~2.0.1"
+    "tailwindcss": "^3.1.6",
+    "vite": "^3.0.2"
   }
 }

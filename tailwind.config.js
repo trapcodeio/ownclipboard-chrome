@@ -1,20 +1,17 @@
 // const colors = require("tailwindcss/colors");
 
 module.exports = {
-  purge: { content: ['./public/**/*.html', './src/**/*.vue'] },
-  darkMode: false, // or 'media' or 'class'
+  content: ["./public/**/*.html", "./src/**/*.vue"],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
         // warmGray: colors.warmGray
       }
-    },
+    }
   },
   variants: {
-    extend: {},
+    extend: {}
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-
-  ],
-}
+  plugins: [require("@tailwindcss/forms")]
+};

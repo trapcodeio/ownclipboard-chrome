@@ -4,17 +4,17 @@
     <template v-if="config.user.connected">
       <!-- Menu -->
       <div class="mx-1 mt-2 mb-3">
-        <Menu class="float-left"/>
+        <Menu class="float-left" />
         <div class="clear-both"></div>
       </div>
 
       <!-- Router View -->
-      <router-view/>
+      <router-view />
     </template>
     <template v-else>
       <div class="grid grid-cols-1 mt-10">
         <div class="col-span-1">
-          <Login/>
+          <Login />
         </div>
       </div>
     </template>
@@ -22,57 +22,57 @@
 </template>
 
 <script>
-import {computed, ref} from "vue"
+import { computed, ref } from "vue";
 import store from "./store/index";
-import {chromeStore, localStore} from "../package/WebStore";
+import { chromeStore, localStore } from "../package/WebStore";
 import chromeAppConfig from "../package/config";
-import Login from "@/components/Login";
-import Busy from "@/components/Busy";
-import Dashboard from "@/views/Online";
-import Menu from "@/components/Menu";
-import {tellBackground} from "@/frontend";
+import Login from "./components/Login.vue";
+import Busy from "./components/Busy.vue";
+import Dashboard from "./views/Online.vue";
+import Menu from "./components/Menu.vue";
+import { tellBackground } from "./frontend";
 
-const isDev = process.env.NODE_ENV === 'development';
+const isDev = process.env.NODE_ENV === "development";
 
 // Vue 3 Setup
 function setup() {
   const config = ref({
-    user: {connected: false}
+    user: { connected: false }
   });
 
   let loaded = ref(false);
 
   // Mock getting config
   if (isDev) {
-    if (localStore.has('config')) {
+    if (localStore.has("config")) {
       // noinspection JSValidateTypes
-      config.value = localStore.getObject('config', chromeAppConfig);
+      config.value = localStore.getObject("config", chromeAppConfig);
     } else {
-      localStore.setObject('config', chromeAppConfig);
+      localStore.setObject("config", chromeAppConfig);
       config.value = chromeAppConfig;
     }
 
     loaded.value = true;
-    store.commit('setConfig', config.value);
+    store.commit("setConfig", config.value);
   } else {
-    chromeStore.get('config').then(data => {
+    chromeStore.get("config").then((data) => {
       if (data) {
-        config.value = data
-        store.commit('setConfig', data);
+        config.value = data;
+        store.commit("setConfig", data);
       }
 
-      tellBackground('checkDaemon')
+      tellBackground("checkDaemon");
 
       loaded.value = true;
-    })
+    });
   }
 
-  return {config: computed(() => store.state.config), loaded};
+  return { config: computed(() => store.state.config), loaded };
 }
 
 export default {
-  name: 'App',
-  components: {Menu, Dashboard, Busy, Login},
+  name: "App",
+  components: { Menu, Dashboard, Busy, Login },
   setup
-}
+};
 </script>
