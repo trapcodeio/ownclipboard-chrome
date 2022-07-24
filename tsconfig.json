@@ -11,11 +11,14 @@
     "skipLibCheck": true,
     "allowJs": true,
     "lib": [
+      "ES2015",
       "esnext",
       "dom"
     ],
     "types": [
-      "vite/client"
+      "vite/client",
+      "@types/chrome",
+      "@types/node",
     ]
   },
   "include": [

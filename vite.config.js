@@ -5,10 +5,15 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src")
-    }
-  }
+  base: "./",
+  build: {
+    emptyOutDir: true,
+    outDir: path.resolve(__dirname, "dist/public")
+  },
+  plugins: [vue()]
+  // resolve: {
+  //   alias: {
+  //     "@": path.resolve(__dirname, "./src")
+  //   }
+  // }
 });
