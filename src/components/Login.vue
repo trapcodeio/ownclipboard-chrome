@@ -46,18 +46,18 @@ function setup() {
   const onClickLogin = async (btn) => {
     if (form.value.host !== config.value["defaultApiHost"]) {
       const url = new URL(form.value.host);
-      url.pathname = "/api/validate";
+      url.pathname = "/api";
 
       try {
         // check url
-        await axios.post(url.href);
+        await axios.post(url.href + "/validate");
 
         // change http base url
-        http.defaults.baseURL = form.value.host;
+        http.defaults.baseURL = url.href;
 
         // Update Config
         const $config = Object.assign({}, config.value);
-        $config["customApiHost"] = form.value.host;
+        $config["customApiHost"] = url.origin;
         await chromeStore.setAsync({ config: $config });
 
         // Commit Config
