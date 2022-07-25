@@ -36,7 +36,7 @@
                 v-model="form.perPage.local"
                 type="number"
                 min="10"
-                max="200"
+                max="250"
                 class="text-white w-32 bg-gray-900 border-gray-800 focus:outline-none focus:ring-gray-800 focus:border-gray-800 sm:text-sm rounded-md"
               />
             </div>
@@ -129,8 +129,8 @@ export default {
       let localLimit = Number(this.form.perPage.local) || 10;
       if (localLimit < 10) {
         localLimit = 10;
-      } else if (localLimit > 200) {
-        localLimit = 200;
+      } else if (localLimit > 250) {
+        localLimit = 250;
       }
 
       config.perPage.local = localLimit;

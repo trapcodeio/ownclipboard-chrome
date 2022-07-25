@@ -28,18 +28,20 @@
 
 <script>
 import { computed, ref } from "vue";
-import store from "../store/index";
+import store from "../store";
 import http, { axios } from "../../package/http";
 import { chromeStore } from "../../package/WebStore";
-import { tellBackground } from "../frontend";
+import { tellBackground, TEST_API_KEY, TEST_HOST } from "../frontend";
 import EnterPin from "../components/EnterPin.vue";
+import { ifDev } from "revue-components/vue3/utils";
 
 function setup() {
   const config = computed(() => store.state.config);
 
   let form = ref({
-    host: config.value["customApiHost"] || config.value["defaultApiHost"],
-    apiKey: null
+    // host:
+    host: ifDev(TEST_HOST, config.value["customApiHost"] || config.value["defaultApiHost"]),
+    apiKey: ifDev(TEST_API_KEY)
   });
 
   const onClickLogin = async (btn) => {
@@ -55,7 +57,7 @@ function setup() {
         http.defaults.baseURL = url.href;
 
         // Update Config
-        const $config = Object.assign({}, config.value);
+        const $config = JSON.parse(JSON.stringify(config.value));
         $config["customApiHost"] = url.origin;
         await chromeStore.setAsync({ config: $config });
 
@@ -68,7 +70,7 @@ function setup() {
 
     http
       .post("connect", { api_key: form.value.apiKey })
-      .then((data) => {
+      .then(async (data) => {
         let newConfig = JSON.parse(JSON.stringify(config.value));
 
         newConfig.user.key = data["api_key"];
@@ -76,7 +78,7 @@ function setup() {
         newConfig.user.connectedData = data;
         newConfig.clips.watch = true;
 
-        chromeStore.set({ config: newConfig });
+        await chromeStore.setAsync({ config: newConfig });
         store.commit("setConfig", newConfig);
 
         // Start watching...

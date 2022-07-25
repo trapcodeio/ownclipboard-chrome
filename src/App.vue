@@ -1,6 +1,8 @@
 <template>
   <section class="ocb-chrome" v-if="loaded && config">
-    <h3 v-if="!config.user.connected" class="text-center mt-5 text-2xl">{{ config.appName }}</h3>
+    <h3 v-if="!config.user.connected" class="text-center mt-5 text-2xl tracking-wide">
+      {{ config.appName }}
+    </h3>
     <template v-if="config.user.connected">
       <!-- Menu -->
       <div class="mx-1 mt-2 mb-3">
@@ -23,22 +25,17 @@
 
 <script lang="ts" setup>
 import { computed, ref } from "vue";
-import store from "./store/index";
+import store from "./store";
 import { chromeStore, localStore } from "../package/WebStore";
 import chromeAppConfig from "../package/config";
 import Login from "./components/Login.vue";
 import Menu from "./components/Menu.vue";
 import { isDev, tellBackground } from "./frontend";
 
-// Vue 3 Setup
-
-const config = computed(() => store.state.config);
-
+let loaded = ref(false);
 const $config = ref<any>({
   user: { connected: false }
 });
-
-let loaded = ref(false);
 
 // Mock getting config
 if (isDev) {
@@ -54,6 +51,7 @@ if (isDev) {
   store.commit("setConfig", $config.value);
 } else {
   chromeStore.get("config").then((data) => {
+    console.log("Config from chrome store", data);
     if (data) {
       $config.value = data;
       store.commit("setConfig", data);
@@ -64,4 +62,8 @@ if (isDev) {
     loaded.value = true;
   });
 }
+
+// Vue 3 Setup
+
+const config = computed(() => store.state.config);
 </script>

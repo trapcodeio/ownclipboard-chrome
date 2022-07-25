@@ -1,12 +1,15 @@
 {
   "name": "ownclipboard-chrome",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "source": "package/background.html",
   "scripts": {
     "start": "parcel",
     "dev": "vite --port 4111",
     "build": "node build-package.js && vite build",
+    "tsc:build": "node build-package.js && npx vue-tsc --noEmit && vite build",
+    "tsc:chrome": "npx tsc --noEmit -p tsconfig.chrome.json",
+    "tsc:vue": "npx tsc --noEmit",
     "serve": "vite preview"
   },
   "dependencies": {
@@ -14,9 +17,11 @@
     "@vitejs/plugin-vue": "^3.0.1",
     "lodash": "^4.17.21",
     "object-collection": "^3.0.1",
+    "revue-components": "^1.3.22",
     "timeago.js": "^4.0.2",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
+    "vue-tsc": "^0.39.0",
     "vuex": "^4.0.0-0"
   },
   "devDependencies": {

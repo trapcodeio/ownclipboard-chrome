@@ -1,6 +1,6 @@
 import axios from "axios";
 import { chromeStore } from "./WebStore";
-import { isDev } from "../src/frontend.js";
+import { isDev } from "../src/frontend";
 
 const http = axios.create({
   baseURL: "https://ownclipboard.com/api"

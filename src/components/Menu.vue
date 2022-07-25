@@ -24,8 +24,7 @@
         exact-active-class="active"
         :to="{ name: 'settings' }"
         class="menu-link"
-      >
-        <svg
+        ><svg
           class="w-5 h-5 text-yellow-400"
           fill="none"
           stroke="currentColor"

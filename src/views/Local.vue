@@ -1,15 +1,22 @@
 <template>
   <div v-if="loaded" class="ocb-chrome-dashboard">
-    <div class="my-3 ml-3 space-x-3 text-gray-500 text-xs">
-      <span>
-        Total: <span class="text-green-500">({{ clips.length }})</span>
-      </span>
-      <span>
-        Max Storage: <span class="text-green-500">({{ config.perPage.local }})</span>
-      </span>
-      <span>
-        Watching: <span class="text-green-500">{{ config.clips.watch }}</span>
-      </span>
+    <div class="flex justify-between">
+      <div class="my-3 ml-3 space-x-3 text-gray-500 text-xs">
+        <span>
+          Total: <span class="text-green-500">({{ clips.length }})</span>
+        </span>
+        <span>
+          Max Storage: <span class="text-green-500">({{ config.perPage.local }})</span>
+        </span>
+        <span>
+          Watching: <span class="text-green-500">{{ config.clips.watch }}</span>
+        </span>
+      </div>
+
+      <div class="mx-3 py-2">
+        <!--  Search Button-->
+        <button class=""><i class="fas fa-search"></i> d</button>
+      </div>
     </div>
     <Clips style="max-height: 430px" :local="true" :clips="clips" />
   </div>
@@ -17,7 +24,7 @@
 
 <script>
 import { computed, ref } from "vue";
-import store from "../store/index";
+import store from "../store";
 import { loadLocalClips } from "../../package/functions/utils.fn";
 import Clips from "../components/Clips.vue";
 

@@ -10,7 +10,7 @@ async function Main() {
     entryPoints: ["./package/background.ts"],
     bundle: true,
     splitting: true,
-    minify: true,
+    minify: false,
     format: "esm",
     outdir: "./dist"
     // target: "chrome58,firefox57,safari11,edge16".split(",")
