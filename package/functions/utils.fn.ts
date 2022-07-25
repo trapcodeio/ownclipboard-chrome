@@ -24,7 +24,7 @@ export async function loadClipsFromServer(page?: number) {
 
   if (clips) {
     clips.date = new Date().toISOString();
-    chromeStore.set({ clips });
+    await chromeStore.setAsync({ clips });
   }
 
   return clips;

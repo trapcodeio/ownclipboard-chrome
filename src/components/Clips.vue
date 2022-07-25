@@ -260,10 +260,8 @@ export default {
       if (clip.code) {
         http
           .delete("delete", {
-            params: {
-              api_key: this.config?.user.key,
-              clip: clip.code
-            }
+            params: { clip: clip.code },
+            headers: { "oc-key": this.config?.user.key }
           })
           .then(() => {
             loadClipsFromServer(this.$route.query.page);

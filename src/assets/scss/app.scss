@@ -88,6 +88,19 @@ body {
       }
     }
   }
+}
 
 
+.searchBar {
+  @apply px-1 flex bg-gray-900 rounded  bg-gray-900;
+  @apply border hover:border-green-500 hover:border-opacity-60 border-gray-700;
+
+  input {
+    color: antiquewhite;
+    @apply text-sm w-full bg-transparent border-none p-2 focus:outline-none focus:ring-0;
+  }
+
+  button {
+    @apply text-sm focus:outline-none focus:ring-0 text-sm  text-gray-500 hover:text-green-500;
+  }
 }

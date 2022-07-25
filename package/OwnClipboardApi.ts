@@ -6,10 +6,8 @@ export class OwnClipboardApi {
     const config = await chromeStore.get("config");
     let api_key;
 
-    if (config) {
-      api_key = config.user.key;
-    }
+    if (config) api_key = config.user.key;
 
-    return http.get("/all", { params: { page, api_key } });
+    return http.get("/all", { params: { page }, headers: { "oc-key": api_key } });
   }
 }
