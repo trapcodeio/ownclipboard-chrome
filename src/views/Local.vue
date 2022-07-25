@@ -10,7 +10,7 @@ const clips = ref<Clip[]>([]);
 const config = computed(() => store.state.config);
 const searchData = ref<Clip[]>([]);
 const search = reactive({
-  show: true,
+  show: false,
   query: ""
 });
 

@@ -67,16 +67,4 @@ if (isDev) {
 
 // Vue 3 Setup
 const config = computed(() => store.state.config);
-
-watch(
-  () => $route.name,
-  () => {
-    console.log("Route changed to", $route.name);
-  },
-  { immediate: true }
-);
-
-function setClipsWidth() {
-  // const
-}
 </script>
