@@ -10,10 +10,13 @@ body {
   height: 530px;
   max-height: 530px;
 
-  @apply text-gray-200 border border-gray-700 pb-10;
+  @apply rounded-lg text-gray-200 border border-gray-700 pb-10;
 }
 
 .ocb-chrome {
+  //max-height: 530px;
+  //@apply overflow-y-auto;
+
   .clips {
     @apply overflow-y-auto;
     max-height: 350px;

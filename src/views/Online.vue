@@ -1,6 +1,6 @@
 <template>
   <div class="ocb-chrome-dashboard">
-    <div class="" v-if="loaded && config">
+    <div v-if="loaded && config">
       <div class="mb-5 mx-3 mt-3">
         <div class="text-xs text-gray-400 mt-2">
           <span class="float-left">
@@ -56,7 +56,7 @@
           </a>
         </div>
       </div>
-      <ClipsList :clips="clips" />
+      <Clips :clips="clips" />
       <Pagination v-model="page" class="mt-3" :data="clips" />
     </div>
     <Busy v-else message="Fetching clips" class="text-gray-500" />
@@ -67,7 +67,7 @@
 import { computed, ref } from "vue";
 import store from "../store";
 import { loadClipsFromCacheOrServer, loadClipsFromServer } from "../../package/functions/utils.fn";
-import ClipsList from "../components/Clips.vue";
+import Clips from "../components/Clips.vue";
 import Pagination from "../components/Pagination.vue";
 
 function setup() {
@@ -93,7 +93,7 @@ function setup() {
 
 export default {
   name: "Online",
-  components: { Pagination, ClipsList },
+  components: { Pagination, Clips },
   setup,
 
   data() {

@@ -1,5 +1,6 @@
 import { chromeStore } from "../WebStore";
 import { OwnClipboardApi } from "../OwnClipboardApi";
+import { Clip } from "../types";
 
 export async function loadClipsFromCacheOrServer() {
   const clipsCache = await chromeStore.get("clips");
@@ -11,7 +12,7 @@ export async function loadClipsFromCacheOrServer() {
 }
 
 export function loadLocalClips() {
-  return chromeStore.get("localClips");
+  return chromeStore.get<Clip[]>("localClips");
 }
 
 export function loadFavClips() {
