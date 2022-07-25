@@ -10,7 +10,7 @@ const clips = ref<Clip[]>([]);
 const config = computed(() => store.state.config);
 const searchData = ref<Clip[]>([]);
 const search = reactive({
-  show: false,
+  show: true,
   query: ""
 });
 
@@ -36,8 +36,12 @@ function runSearch() {
 
 watch(() => search.query, runSearch);
 
+const hasSearchQuery = computed(() => {
+  return search.query.length;
+});
+
 const displayedClips = computed(() => {
-  return searchData.value.length ? searchData.value : clips.value;
+  return hasSearchQuery.value ? searchData.value : clips.value;
 });
 </script>
 
@@ -119,9 +123,14 @@ const displayedClips = computed(() => {
       <!--      </LoadingButton>-->
     </form>
 
-    <h6 v-if="searchData.length" class="text-center my-1 text-xs">
-      Showing Search results for <b>{{ search.query }}</b>
-    </h6>
+    <template v-if="hasSearchQuery">
+      <h6 v-if="searchData.length" class="text-center my-1 text-xs text-green-400">
+        Showing Search results for <b class="text-orange-100">{{ search.query }}</b>
+      </h6>
+      <h6 v-else class="text-center my-1 text-xs text-red-400">
+        No Search results for <b class="text-orange-100">{{ search.query }}</b>
+      </h6>
+    </template>
 
     <Clips
       :style="{
