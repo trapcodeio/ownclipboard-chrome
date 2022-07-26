@@ -27,7 +27,7 @@ const hasSearchQuery = ref(false);
 const hasSearchResults = ref<boolean>();
 
 function updateHasSearchResults(search?: string) {
-  if(typeof search === "undefined"){
+  if (typeof search === "undefined") {
     hasSearchResults.value = undefined;
   } else {
     hasSearchResults.value = !!search;
@@ -46,7 +46,6 @@ watch(page, (newPage) => {
 });
 
 
-
 function refreshClips() {
   showSearch.value = false;
   isRefreshing.value = true;
@@ -61,10 +60,11 @@ function refreshClips() {
 }
 
 let timer: NodeJS.Timer;
+
 function runSearch(search: string) {
   let timeout = 300;
 
-  if(!search.length){
+  if (!search.length) {
     loaded.value = true;
     timeout = 0;
   }
@@ -77,7 +77,7 @@ function runSearch(search: string) {
       .then(({ clips: $clips, search }) => {
         if ($clips) clips.value = $clips;
 
-        if(clips.value.data.length === 0){
+        if (clips.value.data.length === 0) {
           hasSearchResults.value = false;
         } else {
           updateHasSearchResults(search);
@@ -85,8 +85,8 @@ function runSearch(search: string) {
 
         loaded.value = true;
       }).finally(() => {
-        isRefreshing.value = false;
-      });
+      isRefreshing.value = false;
+    });
   }, timeout);
 }
 
@@ -99,7 +99,7 @@ onMounted(() => {
       loaded.value = true;
     })
     .catch((e) => e);
-})
+});
 
 
 // const displayedClips = computed(() => {
