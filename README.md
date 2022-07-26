@@ -1,12 +1,12 @@
 # OwnClipboard Chrome Extension
 
-Official Chrome extension for OwnClipboard, To be out on the chrome web store very soon.
+Official Chrome extension for OwnClipboard, To be out on the Chrome web store very soon.
 
-To load unpacked extension, unzip **package-built.zip** file and load the folder from your chrome extensions page by clicking the load unpacked extension button.
+## Installation
 
-Note: You must have developer mode enabled in chrome.
-
-#### Coming soon
-1. Option to use your own host.
-2. Search Local/Online clips.
-3. Option to clear clips on logout.
+- Unzip the extension
+- Go to [chrome://extensions](chrome://extensions)
+- Enable Developer Mode.
+- Click **Load unpacked** button.
+- Choose/Select the folder where you unzipped the extension contents to
+- Tada!! You should have OwnClipboard installed

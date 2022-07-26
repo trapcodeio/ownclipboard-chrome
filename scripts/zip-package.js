@@ -5,7 +5,7 @@ const base = path.join(__dirname, "..");
 async function createZipArchive() {
   const zip = new AdmZip();
   const inputFolder = base + "/dist";
-  const outputFile = base + "/package.zip";
+  const outputFile = base + "/extension.zip";
   zip.addLocalFolder(inputFolder);
   zip.writeZip(outputFile);
 
