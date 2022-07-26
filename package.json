@@ -6,8 +6,8 @@
   "scripts": {
     "start": "parcel",
     "dev": "vite --port 4111",
-    "build": "node build-package.js && vite build",
-    "tsc:build": "node build-package.js && npx vue-tsc --noEmit && vite build",
+    "build": "node scripts/build-package.js && vite build",
+    "tsc:build": "node scripts/build-package.js && npx vue-tsc --noEmit && vite build && node scripts/zip-package.js",
     "tsc:chrome": "npx tsc --noEmit -p tsconfig.chrome.json",
     "tsc:vue": "npx tsc --noEmit",
     "serve": "vite preview"
@@ -28,8 +28,10 @@
     "@babel/core": "^7.12.0",
     "@tailwindcss/forms": "^0.5.2",
     "@trapcode/browser-storage": "^2.4.2",
+    "@types/adm-zip": "^0.5.0",
     "@types/node": "^18.6.0",
     "@vue/compiler-sfc": "^3.0.0",
+    "adm-zip": "^0.5.9",
     "autoprefixer": "^9",
     "axios": "^0.21.0",
     "esbuild": "^0.14.49",
