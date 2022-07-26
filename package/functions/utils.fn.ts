@@ -1,16 +1,17 @@
 import { chromeStore } from "../WebStore";
 import { GetClipsQuery, OwnClipboardApi } from "../OwnClipboardApi";
-import { Clip } from "../types";
+import { Clip, PaginatedClip } from "../types";
 
 /**
  * Load online clips from cache or from API
  */
 export async function loadClipsFromCacheOrServer() {
-  const clipsCache = await chromeStore.get("clips");
-  if (clipsCache) {
+  const clipsCache = await chromeStore.get<PaginatedClip>("clips");
+  if (clipsCache && clipsCache.total) {
     return clipsCache;
   } else {
-    return loadClipsFromServer();
+    const { clips } = await loadClipsFromServer();
+    return clips;
   }
 }
 
