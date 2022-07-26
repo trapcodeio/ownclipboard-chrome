@@ -2,7 +2,7 @@
 
 Official Chrome extension for OwnClipboard, To be out on the Chrome web store very soon.
 
-## Esxtension Installation
+## Extension Installation
 - Download **extension.zip**
 - Unzip the extension
 - Go to [chrome://extensions](chrome://extensions)
