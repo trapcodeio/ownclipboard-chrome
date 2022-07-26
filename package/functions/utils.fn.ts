@@ -1,5 +1,5 @@
 import { chromeStore } from "../WebStore";
-import { OwnClipboardApi } from "../OwnClipboardApi";
+import { GetClipsQuery, OwnClipboardApi } from "../OwnClipboardApi";
 import { Clip } from "../types";
 
 /**
@@ -30,17 +30,17 @@ export function loadFavClips() {
 
 /**
  * Load clips from server
- * @param page
+ * @param query
  */
-export async function loadClipsFromServer(page?: number) {
-  const { clips } = await OwnClipboardApi.getClips(page);
+export async function loadClipsFromServer(query: GetClipsQuery = {}) {
+  const { clips, search } = await OwnClipboardApi.getClips(query);
 
   if (clips) {
     clips.date = new Date().toISOString();
-    await chromeStore.setAsync({ clips });
+    if (!search) await chromeStore.setAsync({ clips });
   }
 
-  return clips;
+  return { clips, search };
 }
 
 /**

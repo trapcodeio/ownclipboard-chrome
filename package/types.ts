@@ -1,3 +1,5 @@
+import type { Paginated } from "xpress-mongo/src/types/pagination";
+
 export interface Clip {
   favorite?: boolean;
   content: string;
@@ -5,5 +7,7 @@ export interface Clip {
   last_copied: string;
   created_at: string;
 }
+
+export type PaginatedClip = Paginated<Clip> & { date: string };
 
 export type EventsController = Record<string, (ctx: { clip: Clip }) => any>;

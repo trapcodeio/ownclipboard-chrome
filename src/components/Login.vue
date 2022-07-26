@@ -19,7 +19,7 @@
       </div>
       <div class="mt-3">
         <LoadingButton :click="onClickLogin" class="bg-green-600 hover:bg-green-700"
-          >Connect
+        >Connect
         </LoadingButton>
       </div>
     </template>
@@ -45,47 +45,42 @@ function setup() {
   });
 
   const onClickLogin = async (btn) => {
-    if (form.value.host !== config.value["defaultApiHost"]) {
-      const url = new URL(form.value.host);
-      url.pathname = "/api";
 
-      try {
-        // check url
-        await axios.post(url.href + "/validate");
+    const url = new URL(form.value.host);
+    url.pathname = "/api";
 
-        // change http base url
-        http.defaults.baseURL = url.href;
+    try {
+      // check url
+      await axios.post(url.href + "/validate");
 
-        // Update Config
-        const $config = JSON.parse(JSON.stringify(config.value));
-        $config["customApiHost"] = url.origin;
-        await chromeStore.setAsync({ config: $config });
+      // change http base url
+      http.defaults.baseURL = url.href;
 
-        // Commit Config
-        store.commit("setConfig", $config);
-      } catch (e) {
-        return;
-      }
+      // Update Config
+      const $config = JSON.parse(JSON.stringify(config.value));
+      $config["customApiHost"] = url.origin;
+      await chromeStore.setAsync({ config: $config });
+
+      // Commit Config
+      store.commit("setConfig", $config);
+    } catch (e) {
+      return;
     }
 
-    http
-      .post("connect", { api_key: form.value.apiKey })
-      .then(async (data) => {
-        let newConfig = JSON.parse(JSON.stringify(config.value));
+    http.post("connect", { api_key: form.value.apiKey }).then(async (data) => {
+      let newConfig = JSON.parse(JSON.stringify(config.value));
 
-        newConfig.user.key = data["api_key"];
-        newConfig.user.connected = true;
-        newConfig.user.connectedData = data;
-        newConfig.clips.watch = true;
+      newConfig.user.key = data["api_key"];
+      newConfig.user.connected = true;
+      newConfig.user.connectedData = data;
+      newConfig.clips.watch = true;
 
-        await chromeStore.setAsync({ config: newConfig });
-        store.commit("setConfig", newConfig);
+      await chromeStore.setAsync({ config: newConfig });
+      store.commit("setConfig", newConfig);
 
-        // Start watching...
-        tellBackground("startWatch");
-      })
-      .catch((err) => err)
-      .finally(() => btn.stopLoading());
+      // Start watching...
+      tellBackground("startWatch");
+    }).catch((err) => err).finally(() => btn.stopLoading());
   };
 
   return { form, onClickLogin, config };

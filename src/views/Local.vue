@@ -5,13 +5,15 @@ import { loadLocalClips } from "../../package/functions/utils.fn";
 import Clips from "../components/Clips.vue";
 import type { Clip } from "../../package/types";
 import Search from "../components/Search.vue";
-import { search, hasSearchQuery } from "../components/search.state";
 import SearchVisibilityButton from "../components/SearchVisibilityButton.vue";
 
 const loaded = ref(false);
 const clips = ref<Clip[]>([]);
 const config = computed(() => store.state.config);
 const searchData = ref<Clip[]>([]);
+
+const showSearch = ref(false);
+const hasSearchQuery = ref(false);
 
 
 onMounted(() => {
@@ -56,27 +58,19 @@ const displayedClips = computed(() => {
 
       <div class="mx-3 py-2">
         <!--  Search Button-->
-        <SearchVisibilityButton />
+        <SearchVisibilityButton v-model="showSearch" />
       </div>
     </div>
 
-    <Search @search="runSearch" :has-search-results="searchData.length>0" />
-    <!--    <form v-if="search.show" class="mx-3 searchBar">-->
-    <!--      <input placeholder="Search Clips" type="search" v-model="search.query" />-->
-    <!--    </form>-->
-
-    <!--    <template v-if="hasSearchQuery">-->
-    <!--      <h6 v-if="searchData.length" class="text-center my-1 text-xs text-green-400">-->
-    <!--        Showing Search results for <b class="text-orange-100">{{ search.query }}</b>-->
-    <!--      </h6>-->
-    <!--      <h6 v-else class="text-center my-1 text-xs text-red-400">-->
-    <!--        No Search results for <b class="text-orange-100">{{ search.query }}</b>-->
-    <!--      </h6>-->
-    <!--    </template>-->
+    <Search v-if="showSearch"
+      @search="runSearch"
+      v-model:hasQuery="hasSearchQuery"
+      :has-search-results="searchData.length>0"
+    />
 
     <Clips
       :style="{
-        'max-height': search.show ? (hasSearchQuery ? '359px' : '375px') : '420px'
+        'max-height': showSearch ? (hasSearchQuery ? '359px' : '375px') : '420px'
       }"
       :local="true"
       :clips="displayedClips"

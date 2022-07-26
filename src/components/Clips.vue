@@ -216,7 +216,7 @@ export default {
             content: clip.content
           })
           .then(() => {
-            loadClipsFromServer(this.$route.query.page)
+            loadClipsFromServer({ page: this.$route.query.page })
               .then(() => {
                 this.isSyncing = false;
                 this.synced = clipId;
@@ -264,7 +264,7 @@ export default {
             headers: { "oc-key": this.config?.user.key }
           })
           .then(() => {
-            loadClipsFromServer(this.$route.query.page);
+            loadClipsFromServer({page: this.$route.query.page});
           });
       }
     },

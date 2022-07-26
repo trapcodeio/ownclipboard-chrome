@@ -11,7 +11,16 @@
       </div>
 
       <!-- Router View -->
-      <router-view />
+      <template v-if="isDev">
+        <router-view />
+      </template>
+      <template v-else>
+        <router-view v-slot="{ Component }">
+          <keep-alive>
+            <component :is="Component" />
+          </keep-alive>
+        </router-view>
+      </template>
     </template>
     <template v-else>
       <div class="grid grid-cols-1 mt-10">

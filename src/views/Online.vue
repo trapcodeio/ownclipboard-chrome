@@ -1,3 +1,113 @@
+<script lang="ts" setup>
+import { computed, onMounted, ref, watch } from "vue";
+import store from "../store";
+import { loadClipsFromCacheOrServer, loadClipsFromServer } from "../../package/functions/utils.fn";
+import Clips from "../components/Clips.vue";
+import Pagination from "../components/Pagination.vue";
+import Search from "../components/Search.vue";
+import { useRoute } from "vue-router";
+import type { Clip, PaginatedClip } from "../../package/types";
+import SearchVisibilityButton from "../components/SearchVisibilityButton.vue";
+import { Paginated } from "xpress-mongo/src/types/pagination";
+
+const $route = useRoute();
+
+// get page from route query
+const page = computed(() => Number($route.query.page as string) || 1);
+
+
+const loaded = ref(false);
+const isRefreshing = ref(false);
+const clips = ref(Paginated<Clip>() as PaginatedClip);
+// const searchData = ref<PaginatedClip>(Paginated<Clip>() as PaginatedClip);
+
+const config = computed(() => store.state.config);
+const showSearch = ref(false);
+const hasSearchQuery = ref(false);
+const hasSearchResults = ref<boolean>();
+
+function updateHasSearchResults(search?: string) {
+  if(typeof search === "undefined"){
+    hasSearchResults.value = undefined;
+  } else {
+    hasSearchResults.value = !!search;
+  }
+}
+
+
+// watch page
+watch(page, (newPage) => {
+  loaded.value = false;
+  loadClipsFromServer({ page: newPage }).then(({ clips: $clips, search }) => {
+    if ($clips) clips.value = $clips;
+    updateHasSearchResults(search);
+    loaded.value = true;
+  });
+});
+
+
+
+function refreshClips() {
+  showSearch.value = false;
+  isRefreshing.value = true;
+  loadClipsFromServer()
+    .then(({ clips: $clips }) => {
+      if ($clips) clips.value = $clips;
+    })
+    .catch((e) => e)
+    .finally(() => {
+      isRefreshing.value = false;
+    });
+}
+
+let timer: NodeJS.Timer;
+function runSearch(search: string) {
+  let timeout = 300;
+
+  if(!search.length){
+    loaded.value = true;
+    timeout = 0;
+  }
+
+  clearTimeout(timer);
+  isRefreshing.value = true;
+
+  timer = setTimeout(() => {
+    loadClipsFromServer({ search })
+      .then(({ clips: $clips, search }) => {
+        if ($clips) clips.value = $clips;
+
+        if(clips.value.data.length === 0){
+          hasSearchResults.value = false;
+        } else {
+          updateHasSearchResults(search);
+        }
+
+        loaded.value = true;
+      }).finally(() => {
+        isRefreshing.value = false;
+      });
+  }, timeout);
+}
+
+
+onMounted(() => {
+  // Load clips from cache or server
+  loadClipsFromCacheOrServer()
+    .then(($clips) => {
+      if ($clips) clips.value = $clips;
+      loaded.value = true;
+    })
+    .catch((e) => e);
+})
+
+
+// const displayedClips = computed(() => {
+//   return hasSearchResults.value ? searchData.value : clips.value;
+// });
+
+</script>
+
 <template>
   <div class="ocb-chrome-dashboard">
     <div v-if="loaded && config">
@@ -5,7 +115,7 @@
         <div class="text-xs text-gray-400 mt-2">
           <span class="float-left">
             Device:
-            <strong class="text-green-500 mr-2">{{ config.user.connectedData.name }}</strong> Total:
+            <strong class="text-green-500 mr-2">{{ config.user.connectedData?.name }}</strong> Total:
             <span class="text-green-500">({{ clips.total }})</span>
           </span>
 
@@ -55,11 +165,15 @@
               </svg>
             </a>
           </div>
-          <div class="w-full">
-            <Search @search="runSearch" :has-search-results="searchData.length>0" />
+          <div v-if="showSearch" class="w-full">
+            <Search
+              @search="runSearch"
+              v-model:hasQuery="hasSearchQuery"
+              :has-search-results="hasSearchResults"
+            />
           </div>
           <div class="py-1 flex-initial">
-            <SearchVisibilityButton/>
+            <SearchVisibilityButton v-model="showSearch" />
           </div>
         </div>
       </div>
@@ -70,76 +184,6 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import { computed, ref, watch } from "vue";
-import store from "../store";
-import { loadClipsFromCacheOrServer, loadClipsFromServer } from "../../package/functions/utils.fn";
-import Clips from "../components/Clips.vue";
-import Pagination from "../components/Pagination.vue";
-import Search from "../components/Search.vue";
-import { useRoute } from "vue-router";
-import type { Clip } from "../../package/types";
-import SearchVisibilityButton from "../components/SearchVisibilityButton.vue";
-
-const $route = useRoute();
-// get page from route query
-const page = computed(() => $route.query.page as number);
-
-
-const loaded = ref(false);
-const isRefreshing = ref(false);
-const clips = ref({
-  data: [],
-  total: 0
-});
-const config = computed(() => store.state.config);
-const searchData = ref([] as Clip[]);
-
-
-// watch page
-watch(page, (newPage) => {
-  loaded.value = false;
-  loadClipsFromServer(newPage).then((clips) => {
-    if (clips) clips.value = clips;
-    loaded.value = true;
-  });
-});
-
-
-function refreshClips() {
-  isRefreshing.value = true;
-  loadClipsFromServer()
-    .then(($clips) => {
-      if ($clips) clips.value = $clips;
-    })
-    .catch((e) => e)
-    .finally(() => {
-      isRefreshing.value = false;
-    });
-}
-
-function runSearch(query: string) {
-  if (!query.length) {
-    searchData.value = [];
-    return;
-  }
-
-  searchData.value = clips.value.data.filter((clip) => {
-    return clip.content.toLowerCase().includes(query.toLowerCase());
-  });
-}
-
-/**
- * @type {*} clips
- */
-loadClipsFromCacheOrServer()
-  .then(($clips) => {
-    if ($clips) clips.value = $clips;
-    loaded.value = true;
-  })
-  .catch((e) => e);
-
-</script>
 
 <style lang="scss">
 .ocb-chrome-dashboard {

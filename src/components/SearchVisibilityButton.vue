@@ -1,12 +1,23 @@
 <script setup lang="ts">
-import {search} from "./search.state";
+import { toRefs} from "vue";
+
+const props = defineProps({
+ modelValue: {
+  type: Boolean,
+  default: false
+ }
+});
+
+const {modelValue} = toRefs(props);
+const emit = defineEmits(["update:modelValue"]);
+
 </script>
 <template>
   <button
-    @click.prevent="search.show = !search.show"
+    @click.prevent="emit('update:modelValue', !modelValue)"
     class="text-gray-500 hover:text-green-500"
   >
-    <template v-if="search.show">
+    <template v-if="modelValue">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="h-6 w-6"

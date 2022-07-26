@@ -5,7 +5,7 @@ export default {
   user: {
     key: null,
     connected: false,
-    connectedData: null
+    connectedData: undefined as undefined | Record<string, any>
   },
   clips: {
     watch: false,
