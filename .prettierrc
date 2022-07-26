@@ -3,6 +3,7 @@
   "semi": true,
   "trailingComma": "none",
   "singleQuote": false,
+  "parser": "typescript",
   "printWidth": 100,
   "endOfLine": "auto"
 }
