@@ -41,7 +41,6 @@ import Login from "./components/Login.vue";
 import Menu from "./components/Menu.vue";
 import { isDev, tellBackground } from "./frontend";
 import { useRoute } from "vue-router";
-
 const $route = useRoute();
 let loaded = ref(false);
 const $config = ref<any>({
@@ -62,7 +61,6 @@ if (isDev) {
   store.commit("setConfig", $config.value);
 } else {
   chromeStore.get("config").then((data) => {
-    console.log("Config from chrome store", data);
     if (data) {
       $config.value = data;
       store.commit("setConfig", data);
