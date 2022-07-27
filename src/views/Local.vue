@@ -6,7 +6,9 @@ import Clips from "../components/Clips.vue";
 import type { Clip } from "../../package/types";
 import Search from "../components/Search.vue";
 import SearchVisibilityButton from "../components/SearchVisibilityButton.vue";
+import { useRouteHelpers } from "../frontend";
 
+const { onPageName } = useRouteHelpers();
 const loaded = ref(false);
 const clips = ref<Clip[]>([]);
 const config = computed(() => store.state.config);
@@ -25,6 +27,7 @@ function getClips() {
 }
 
 onMounted(getClips);
+onPageName("local", getClips);
 
 function runSearch(query: string) {
   if (!query.length) {

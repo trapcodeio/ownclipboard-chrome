@@ -14,14 +14,13 @@ import Clips from "../components/Clips.vue";
 import { Clip } from "../../package/types";
 import { useRouteHelpers } from "../frontend";
 
-const { onPageNameChange } = useRouteHelpers();
+const { onPageName } = useRouteHelpers();
 const loaded = ref(false);
 const clips = ref([] as Clip[]);
 
 function getFavClips() {
   loadFavClips()
     .then(($clips) => {
-      console.log("Fav Clips:", $clips);
       if (Array.isArray($clips)) clips.value = $clips;
       loaded.value = true;
     })
@@ -29,7 +28,7 @@ function getFavClips() {
 }
 
 onMounted(getFavClips);
-onPageNameChange(getFavClips);
+onPageName("fav", getFavClips);
 </script>
 
 <style scoped></style>

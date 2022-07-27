@@ -129,7 +129,7 @@
 import TimeAgo from "../components/TimeAgo.vue";
 import { copyTextToClipboard, loadClipsFromServer } from "../../package/functions/utils.fn";
 import { localStore } from "../../package/WebStore";
-import { computed, PropType, ref, toRefs } from "vue";
+import { computed, PropType, ref, toRefs, watch } from "vue";
 import { isDev, tellBackground } from "../frontend";
 import { useStore } from "vuex";
 import http from "../../package/http";
@@ -159,9 +159,15 @@ const syncedTimeOut = ref<NodeJS.Timer>();
 const synced = ref<ClipId>();
 const favorite = ref<ClipId>();
 
-if (clips) {
-  clipsOnDisplay.value = clips.value as Clip[];
-}
+watch(
+  clips,
+  () => {
+    if (clips.value) {
+      clipsOnDisplay.value = clips.value as Clip[];
+    }
+  },
+  { immediate: true }
+);
 
 /**
  * ===== Computed =====
@@ -177,8 +183,8 @@ const computedClips = computed(() => {
 // clip being viewed
 const viewing = computed(() => {
   if (isViewing.value === undefined) return null;
-  const clips = computedClips.value;
-  const clip = clips[isViewing.value];
+  const $clips = computedClips.value;
+  const clip = $clips[isViewing.value];
   if (!clip) return null;
   return clip.html_formatted ? clip.html_formatted : clip.content;
 });

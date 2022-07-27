@@ -25,9 +25,15 @@ export function tellBackground(
 export function useRouteHelpers() {
   const $route = useRoute();
 
-  function onPageNameChange(fn: (page?: string) => void | any) {
+  function onPageNameChange(fn: (name?: string) => void | any) {
     watch(() => $route.name as string | undefined, fn);
   }
 
-  return { onPageNameChange };
+  function onPageName(name: string, fn: (name?: string) => void | any) {
+    onPageNameChange(($name) => {
+      if ($name === name) fn();
+    });
+  }
+
+  return { onPageNameChange, onPageName };
 }
