@@ -173,6 +173,7 @@ const maxHeight = computed(() => {
           </div>
           <div v-if="showSearch" class="w-full">
             <Search
+              placeholder="Search Online Clips"
               @search="runSearch"
               v-model:hasQuery="hasSearchQuery"
               :has-search-results="hasSearchResults"

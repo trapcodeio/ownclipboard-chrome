@@ -81,6 +81,7 @@ function clearAll(btn: ILoadingButton) {
 
     <Search
       v-if="showSearch"
+      placeholder="Search Local Clips..."
       @search="runSearch"
       v-model:hasQuery="hasSearchQuery"
       :has-search-results="searchData.length > 0"
