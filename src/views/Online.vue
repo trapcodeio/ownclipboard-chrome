@@ -15,7 +15,6 @@ const $route = useRoute();
 // get page from route query
 const page = computed(() => Number($route.query.page as string) || 1);
 
-
 const loaded = ref(false);
 const isRefreshing = ref(false);
 const clips = ref(Paginated<Clip>() as PaginatedClip);
@@ -34,7 +33,6 @@ function updateHasSearchResults(search?: string) {
   }
 }
 
-
 // watch page
 watch(page, (newPage) => {
   loaded.value = false;
@@ -44,7 +42,6 @@ watch(page, (newPage) => {
     loaded.value = true;
   });
 });
-
 
 function refreshClips() {
   showSearch.value = false;
@@ -84,12 +81,12 @@ function runSearch(search: string) {
         }
 
         loaded.value = true;
-      }).finally(() => {
-      isRefreshing.value = false;
-    });
+      })
+      .finally(() => {
+        isRefreshing.value = false;
+      });
   }, timeout);
 }
-
 
 onMounted(() => {
   // Load clips from cache or server
@@ -101,21 +98,30 @@ onMounted(() => {
     .catch((e) => e);
 });
 
-
 // const displayedClips = computed(() => {
 //   return hasSearchResults.value ? searchData.value : clips.value;
 // });
 
+const maxHeight = computed(() => {
+  const hasPagination = clips.value.lastPage > 1;
+
+  if (hasPagination) {
+    return hasSearchQuery.value ? "340px" : "360px";
+  } else {
+    return hasSearchQuery.value ? "383px" : "400px";
+  }
+});
 </script>
 
 <template>
   <div class="ocb-chrome-dashboard">
     <div v-if="loaded && config">
-      <div class="mb-5 mx-3 mt-3">
+      <div class="mb-0 mx-3 mt-3">
         <div class="text-xs text-gray-400 mt-2">
           <span class="float-left">
             Device:
-            <strong class="text-green-500 mr-2">{{ config.user.connectedData?.name }}</strong> Total:
+            <strong class="text-green-500 mr-2">{{ config.user.connectedData?.name }}</strong>
+            Total:
             <span class="text-green-500">({{ clips.total }})</span>
           </span>
 
@@ -125,7 +131,7 @@ onMounted(() => {
           <div class="clear-both"></div>
         </div>
 
-        <div class="flex my-3 justify-between">
+        <div class="flex my-1 justify-between">
           <div class="cursor-pointer py-1 flex-initial">
             <template v-if="isRefreshing">
               <a
@@ -177,13 +183,17 @@ onMounted(() => {
           </div>
         </div>
       </div>
-      <Clips :clips="clips" />
+      <Clips
+        :style="{
+          'max-height': maxHeight
+        }"
+        :clips="clips"
+      />
       <Pagination v-model="page" class="mt-3" :data="clips" />
     </div>
     <Busy v-else message="Fetching clips" class="text-gray-500" />
   </div>
 </template>
-
 
 <style lang="scss">
 .ocb-chrome-dashboard {
