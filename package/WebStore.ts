@@ -44,7 +44,7 @@ export const chromeStore = {
       // noinspection JSUnresolvedVariable
       if (chrome && chrome.storage) {
         // noinspection JSUnresolvedVariable
-        chrome.storage.local.remove(key).then(resolve);
+        chrome.storage.local.remove(key, resolve);
       } else {
         localStore.remove(key);
         resolve();
