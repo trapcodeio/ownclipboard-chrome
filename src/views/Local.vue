@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import store from "../store";
-import { loadLocalClips } from "../../package/functions/utils.fn";
+import { clearLocalClips, loadLocalClips } from "../../package/functions/utils.fn";
 import Clips from "../components/Clips.vue";
 import type { Clip } from "../../package/types";
 import Search from "../components/Search.vue";
 import SearchVisibilityButton from "../components/SearchVisibilityButton.vue";
 import { useRouteHelpers } from "../frontend";
+import type { ILoadingButton } from "revue-components/vues/component-types";
 
 const { onPageName } = useRouteHelpers();
 const loaded = ref(false);
@@ -43,6 +44,18 @@ function runSearch(query: string) {
 const displayedClips = computed(() => {
   return hasSearchQuery.value ? searchData.value : clips.value;
 });
+
+function clearAll(btn: ILoadingButton) {
+  const shouldClear = confirm("Are you sure you want to clear all local histories?");
+
+  if (!shouldClear) return btn.stopLoading();
+
+  clearLocalClips()
+    .then(() => {
+      clips.value = [];
+    })
+    .finally(btn.stopLoading);
+}
 </script>
 
 <template>
@@ -75,10 +88,21 @@ const displayedClips = computed(() => {
 
     <Clips
       :style="{
-        'max-height': showSearch ? (hasSearchQuery ? '359px' : '375px') : '420px'
+        'max-height': showSearch ? (hasSearchQuery ? '324px' : '340px') : '385px'
       }"
       :local="true"
       :clips="displayedClips"
     />
+
+    <div v-if="clips.length > 1" class="text-right my-2 mx-3">
+      <LoadingButton
+        :click="clearAll"
+        message="Clearing.."
+        no-button-class
+        class="text-xs text-red-400 bg-gray-900 hover:text-white hover:bg-red-500 rounded px-2 py-1"
+      >
+        Clear All
+      </LoadingButton>
+    </div>
   </div>
 </template>

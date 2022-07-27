@@ -23,6 +23,14 @@ export function loadLocalClips() {
 }
 
 /**
+ * Clear local clips
+ */
+export async function clearLocalClips() {
+  await chromeStore.remove("LocalClips");
+  await chromeStore.setAsync({ localClips: [] });
+}
+
+/**
  * Load favorite clips
  */
 export function loadFavClips() {
