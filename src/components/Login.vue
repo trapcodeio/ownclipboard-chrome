@@ -19,58 +19,64 @@
       </div>
       <div class="mt-3">
         <LoadingButton :click="onClickLogin" class="bg-green-600 hover:bg-green-700"
-        >Connect
+          >Connect
         </LoadingButton>
       </div>
     </template>
   </form>
 </template>
 
-<script>
+<script lang="ts" setup>
 import { computed, ref } from "vue";
 import store from "../store";
-import http, { axios } from "../../package/http";
+import http, { axios, setupHttp } from "../../package/http";
 import { chromeStore } from "../../package/WebStore";
 import { tellBackground, TEST_API_KEY, TEST_HOST } from "../frontend";
 import EnterPin from "../components/EnterPin.vue";
 import { ifDev } from "revue-components/vue3/utils";
 
-function setup() {
-  const config = computed(() => store.state.config);
+import { ILoadingButton } from "revue-components/vues/component-types";
+import { Config, ConnectedResponse } from "../../package/config";
+import { copyObjectUsingJson } from "../../package/functions/lean.fn";
 
-  let form = ref({
-    // host:
-    host: ifDev(TEST_HOST, config.value["customApiHost"] || config.value["defaultApiHost"]),
-    apiKey: ifDev(TEST_API_KEY)
-  });
+const config = computed(() => store.state.config as Config);
 
-  const onClickLogin = async (btn) => {
+let form = ref({
+  // host:
+  host: ifDev(TEST_HOST, config.value["customApiHost"] || config.value["defaultApiHost"]),
+  apiKey: ifDev(TEST_API_KEY)
+});
 
-    const url = new URL(form.value.host);
-    url.pathname = "/api";
+const onClickLogin = async (btn: ILoadingButton) => {
+  if (!form.value.host || !form.value.apiKey) return btn.stopLoading();
 
-    try {
-      // check url
-      await axios.post(url.href + "/validate");
+  const url = new URL(form.value.host);
+  url.pathname = "/api";
 
-      // change http base url
-      http.defaults.baseURL = url.href;
+  try {
+    // check url
+    await axios.post(url.href + "/validate");
 
-      // Update Config
-      const $config = JSON.parse(JSON.stringify(config.value));
-      $config["customApiHost"] = url.origin;
-      await chromeStore.setAsync({ config: $config });
+    // Update Config
+    const $config: Config = copyObjectUsingJson(config.value);
+    $config["customApiHost"] = url.origin;
 
-      // Commit Config
-      store.commit("setConfig", $config);
-    } catch (e) {
-      return;
-    }
+    // Commit Config
+    await chromeStore.setAsync({ config: $config });
+    store.commit("setConfig", $config);
 
-    http.post("connect", { api_key: form.value.apiKey }).then(async (data) => {
-      let newConfig = JSON.parse(JSON.stringify(config.value));
+    // save key and set apiKey
+    setupHttp($config, form.value.apiKey);
+  } catch (e) {
+    return;
+  }
 
-      newConfig.user.key = data["api_key"];
+  http
+    .post<any, ConnectedResponse>("connect")
+    .then(async (data) => {
+      let newConfig = copyObjectUsingJson(config.value);
+
+      newConfig.user.key = data.api_key;
       newConfig.user.connected = true;
       newConfig.user.connectedData = data;
       newConfig.clips.watch = true;
@@ -80,24 +86,18 @@ function setup() {
 
       // Start watching...
       tellBackground("startWatch");
-    }).catch((err) => err).finally(() => btn.stopLoading());
-  };
-
-  return { form, onClickLogin, config };
-}
-
-export default {
-  components: { EnterPin },
-  setup,
-  name: "Login",
-  methods: {
-    onPinSuccess() {
-      const newConfig = this.config;
-      newConfig.user.connected = true;
-      chromeStore.set({ config: newConfig }, () => {
-        store.commit("setConfig", newConfig);
-      });
-    }
-  }
+    })
+    .catch((err) => err)
+    .finally(() => btn.stopLoading());
 };
+
+function onPinSuccess() {
+  let newConfig = copyObjectUsingJson(config.value);
+  newConfig.user.connected = true;
+
+  // update config.
+  chromeStore.set({ config: newConfig }, () => {
+    store.commit("setConfig", newConfig);
+  });
+}
 </script>

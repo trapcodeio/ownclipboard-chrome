@@ -1,0 +1,29 @@
+{
+  "name": "OwnClipboard",
+  "version": "1.1",
+  "description": "OwnClipboard.com Chrome Extension",
+  "manifest_version": 2,
+  "background": {
+    "page": "background.html",
+    "persistent": true
+  },
+  "permissions": [
+    "unlimitedStorage",
+    "activeTab",
+    "storage",
+    "clipboardRead",
+    "clipboardWrite",
+    "contextMenus"
+  ],
+  "optional_permissions": [
+    "tabs"
+  ],
+  "browser_action": {
+    "default_title": "OwnClipboard", 
+    "default_popup": "public/index.html",
+    "default_icon": {
+      "16": "icons/favicon-16x16.png",
+      "32": "icons/android-icon-36x36.png"
+    }
+  }
+}

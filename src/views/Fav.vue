@@ -7,29 +7,24 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
 import { ref } from "vue";
 import { loadFavClips } from "../../package/functions/utils.fn";
 import Clips from "../components/Clips.vue";
+import { Clip } from "../../package/types";
 
-export default {
-  name: "Local",
-  components: { Clips },
-  setup() {
-    const loaded = ref(false);
-    const $clips = ref([]);
 
-    loadFavClips()
-      .then((clips) => {
-        if (Array.isArray(clips)) $clips.value = clips;
+const loaded = ref(false);
+const clips = ref([] as Clip[]);
 
-        loaded.value = true;
-      })
-      .catch((e) => e);
+loadFavClips().then(($clips) => {
+  console.log($clips);
+  if (Array.isArray($clips)) clips.value = $clips;
 
-    return { clips: $clips, loaded };
-  }
-};
+  loaded.value = true;
+}).catch((e) => e);
+
+
 </script>
 
 <style scoped></style>

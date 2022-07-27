@@ -49,6 +49,7 @@ export function updateConfig(data: Record<string, any>, config?: any) {
  * @returns {string|null}
  */
 export function readClipboard() {
+  // return navigator.clipboard.readText();
   const textArea = document.getElementById("ocb-chrome-textarea") as HTMLInputElement;
   if (textArea) {
     textArea.value = "";

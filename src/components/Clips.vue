@@ -1,6 +1,6 @@
 <template>
   <div class="clips">
-    <template v-if="isViewing === false">
+    <template v-if="isViewing === undefined">
       <template v-for="(clip, clipId) in local ? clips : clips.data" :key="clipId">
         <div class="clip">
           <h6 v-if="copied === clipId" class="text-xs text-center capitalize text-green-300">
@@ -125,159 +125,184 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
 import TimeAgo from "../components/TimeAgo.vue";
 import { copyTextToClipboard, loadClipsFromServer } from "../../package/functions/utils.fn";
 import { localStore } from "../../package/WebStore";
-import { ref } from "vue";
-import { tellBackground } from "../frontend";
-import { mapState } from "vuex";
+import { computed, PropType, ref, toRefs } from "vue";
+import { isDev, tellBackground } from "../frontend";
+import { useStore } from "vuex";
 import http from "../../package/http";
+import { Clip, PaginatedClip } from "../../package/types";
 
-export default {
-  name: "Clips",
-  components: { TimeAgo },
+const props = defineProps({
+  clips: { type: [Array, Object] as PropType<Clip[] | PaginatedClip>, default: () => [] },
+  local: { type: Boolean, default: false },
+  isFavList: { type: Boolean, default: false }
+});
 
-  setup({ clips }) {
-    const clipsOnDisplay = ref(null);
+const { clips, local, isFavList } = toRefs(props);
 
-    if (clips) {
-      clipsOnDisplay.value = clips;
-    }
+const store = useStore();
+const config = computed(() => store.state.config);
 
-    return { clipsOnDisplay };
-  },
+// Convert data to refs
+const clipsOnDisplay = ref<Clip[] | PaginatedClip>();
+const copied = ref<number>();
+const copiedTimeOut = ref<NodeJS.Timer>();
+const isViewing = ref<number>();
+const isSyncing = ref<number>();
+const syncedTimeOut = ref(0);
+const synced = ref(false);
+const favorite = ref(false);
 
-  data() {
-    return {
-      copied: false,
-      copiedTimeOut: 0,
-      isViewing: false,
-      isSyncing: false,
-      syncedTimeOut: 0,
-      synced: false,
-      favorite: false
-    };
-  },
+if (clips) {
+  clipsOnDisplay.value = clips.value as Clip[];
+}
 
-  props: {
-    clips: { type: [Array, Object], default: () => [] },
-    local: { type: Boolean, default: false },
-    isFavList: { type: Boolean, default: false }
-  },
+/**
+ * ===== Computed =====
+ */
+const computedClips = computed(() => {
+  if (local.value) {
+    return clipsOnDisplay.value as Clip[];
+  } else {
+    return (clipsOnDisplay.value as PaginatedClip).data;
+  }
+});
 
-  computed: {
-    ...mapState(["isDev", "config"]),
-    computedClips() {
-      return this.local ? this.clipsOnDisplay : this.clipsOnDisplay.data;
-    },
-    viewing() {
-      if (this.isViewing === false) return null;
-      const clips = this.computedClips;
-      const clip = clips[this.isViewing];
-      if (!clip) return null;
-      return clip.html_formatted ? clip.html_formatted : clip.content;
-    }
-  },
+// clip being viewed
+const viewing = computed(() => {
+  if (isViewing.value === undefined) return null;
+  const clips = computedClips.value;
+  const clip = clips[isViewing.value];
+  if (!clip) return null;
+  return clip.html_formatted ? clip.html_formatted : clip.content;
+});
 
-  methods: {
-    copyClip(clip, index) {
-      copyTextToClipboard(clip.content);
-      this.copied = index;
+/**
+ * ===== Methods =====
+ */
+function copyClip(clip: Clip, index: number) {
+  copyTextToClipboard(clip.content);
+  copied.value = index;
 
-      if (this.$store.state.isDev) {
-        const clips = localStore.getArray("localClips", []);
-        clips.unshift({
-          content: clip.content,
-          last_copied: new Date().toISOString(),
-          created_at: new Date().toISOString()
-        });
-        localStore.setArray("localClips", clips);
-      }
+  if (isDev) {
+    const $clips = localStore.getArray<Clip[]>("localClips", []);
 
-      clearTimeout(this.copiedTimeOut);
-      this.copiedTimeOut = setTimeout(() => {
-        this.copied = false;
-      }, 5000);
-    },
+    $clips.unshift({
+      content: clip.content,
+      last_copied: new Date().toISOString(),
+      created_at: new Date().toISOString()
+    });
 
-    viewClip(clipId) {
-      this.isViewing = clipId;
-    },
+    localStore.setArray("localClips", $clips);
+  }
 
-    syncClip(clipId) {
-      const clip = this.computedClips[clipId];
-      if (!this.isSyncing && clip) {
-        this.isSyncing = clipId;
+  clearTimeout(copiedTimeOut.value);
+  copiedTimeOut.value = setTimeout(() => {
+    copied.value = undefined;
+  }, 5000);
+}
 
-        http
-          .post("add", {
-            api_key: this.config?.user.key,
-            content: clip.content
-          })
+function viewClip(clipId: number) {
+  isViewing.value = clipId;
+}
+
+function syncClip(clipId: number) {
+  // const clip = this.computedClips[clipId];
+  // if (!this.isSyncing && clip) {
+  //   this.isSyncing = clipId;
+  //
+  //   http
+  //     .post("add", {
+  //       api_key: this.config?.user.key,
+  //       content: clip.content
+  //     })
+  //     .then(() => {
+  //       loadClipsFromServer({ page: this.$route.query.page })
+  //         .then(() => {
+  //           this.isSyncing = false;
+  //           this.synced = clipId;
+  //
+  //           clearTimeout(this.syncedTimeOut);
+  //           this.syncedTimeOut = setTimeout(() => {
+  //             this.synced = false;
+  //           }, 5000);
+  //         })
+  //         .catch(() => (this.isSyncing = false));
+  //     })
+  //     .catch(() => (this.isSyncing = false));
+  // }
+
+  // convert to set up
+  const clip = computedClips.value[clipId];
+  if (isSyncing.value === undefined && clip) {
+    isSyncing.value = clipId;
+
+    http
+      .post("add", {
+        content: clip.content
+      })
+      .then(() => {
+        loadClipsFromServer({ page: config.value.page })
           .then(() => {
-            loadClipsFromServer({ page: this.$route.query.page })
-              .then(() => {
-                this.isSyncing = false;
-                this.synced = clipId;
+            isSyncing.value = false;
+            synced.value = clipId;
 
-                clearTimeout(this.syncedTimeOut);
-                this.syncedTimeOut = setTimeout(() => {
-                  this.synced = false;
-                }, 5000);
-              })
-              .catch(() => (this.isSyncing = false));
+            clearTimeout(syncedTimeOut.value);
+            syncedTimeOut.value = setTimeout(() => {
+              synced.value = false;
+            }, 5000);
           })
-          .catch(() => (this.isSyncing = false));
+          .catch(() => (isSyncing.value = false));
+      })
+      .catch(() => (isSyncing.value = false));
+  }
+}
+
+function deleteClip(clipId) {
+  const shouldDelete = confirm("Are you sure you want to delete this clip?");
+  if (shouldDelete) {
+    const clip = this.computedClips[clipId];
+    this.local ? this.clipsOnDisplay.splice(clipId, 1) : this.clipsOnDisplay.data.splice(clipId, 1);
+
+    if (this.isDev) {
+      if (this.local) {
+        localStore.setArray("localClips", this.clipsOnDisplay);
+      } else {
+        this.deleteOnlineClip(clip);
       }
-    },
-
-    deleteClip(clipId) {
-      const shouldDelete = confirm("Are you sure you want to delete this clip?");
-      if (shouldDelete) {
-        const clip = this.computedClips[clipId];
-        this.local
-          ? this.clipsOnDisplay.splice(clipId, 1)
-          : this.clipsOnDisplay.data.splice(clipId, 1);
-
-        if (this.isDev) {
-          if (this.local) {
-            localStore.setArray("localClips", this.clipsOnDisplay);
-          } else {
-            this.deleteOnlineClip(clip);
-          }
-        } else {
-          if (this.local) {
-            tellBackground("deleteLocalClip", { clip });
-          } else {
-            this.deleteOnlineClip(clip);
-          }
-        }
+    } else {
+      if (this.local) {
+        tellBackground("deleteLocalClip", { clip });
+      } else {
+        this.deleteOnlineClip(clip);
       }
-    },
-
-    deleteOnlineClip(clip) {
-      if (clip.code) {
-        http
-          .delete("delete", {
-            params: { clip: clip.code },
-            headers: { "oc-key": this.config?.user.key }
-          })
-          .then(() => {
-            loadClipsFromServer({page: this.$route.query.page});
-          });
-      }
-    },
-
-    favClip(clipId) {
-      const clip = this.computedClips[clipId];
-      tellBackground("favClip", { clip });
-      this.favorite = clipId;
-      clearTimeout(this.syncedTimeOut);
-      this.syncedTimeOut = setTimeout(() => {
-        this.favorite = false;
-      }, 5000);
     }
   }
-};
+}
+
+function deleteOnlineClip(clip) {
+  if (clip.code) {
+    http
+      .delete("delete", {
+        params: { clip: clip.code },
+        headers: { "oc-key": this.config?.user.key }
+      })
+      .then(() => {
+        loadClipsFromServer({ page: this.$route.query.page });
+      });
+  }
+}
+
+function favClip(clipId) {
+  const clip = this.computedClips[clipId];
+  tellBackground("favClip", { clip });
+  this.favorite = clipId;
+  clearTimeout(this.syncedTimeOut);
+  this.syncedTimeOut = setTimeout(() => {
+    this.favorite = false;
+  }, 5000);
+}
 </script>

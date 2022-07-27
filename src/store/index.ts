@@ -1,10 +1,11 @@
 import { createStore } from "vuex";
 import { isDev } from "../frontend";
+import type { Config } from "../../package/config";
 
 export default createStore({
   state: {
     isDev,
-    config: null as null | typeof import("../../package/config").default
+    config: undefined as Config | undefined
   },
   mutations: {
     setConfig(state, data) {
