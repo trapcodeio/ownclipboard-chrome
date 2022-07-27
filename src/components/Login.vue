@@ -88,7 +88,7 @@ const onClickLogin = async (btn: ILoadingButton) => {
       tellBackground("startWatch");
     })
     .catch((err) => err)
-    .finally(() => btn.stopLoading());
+    .finally(btn.stopLoading);
 };
 
 function onPinSuccess() {

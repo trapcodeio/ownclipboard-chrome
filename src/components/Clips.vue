@@ -1,7 +1,7 @@
 <template>
   <div class="clips">
     <template v-if="isViewing === undefined">
-      <template v-for="(clip, clipId) in local ? clips : clips.data" :key="clipId">
+      <template v-for="(clip, clipId) in computedClips" :key="clipId">
         <div class="clip">
           <h6 v-if="copied === clipId" class="text-xs text-center capitalize text-green-300">
             #copied successfully!
@@ -112,7 +112,7 @@
         <div
           class="inline-block text-left top-0 w-full bg-gray-900 px-3 py-3 transform transition-all opacity-90"
         >
-          <a @click.prevent="isViewing = false" class="ml-1 text-green-500 cursor-pointer"
+          <a @click.prevent="isViewing = undefined" class="ml-1 text-green-500 cursor-pointer"
             >&leftarrow; Close</a
           >
 
@@ -134,7 +134,9 @@ import { isDev, tellBackground } from "../frontend";
 import { useStore } from "vuex";
 import http from "../../package/http";
 import { Clip, PaginatedClip } from "../../package/types";
+import { useRoute } from "vue-router";
 
+const $route = useRoute();
 const props = defineProps({
   clips: { type: [Array, Object] as PropType<Clip[] | PaginatedClip>, default: () => [] },
   local: { type: Boolean, default: false },
@@ -147,14 +149,15 @@ const store = useStore();
 const config = computed(() => store.state.config);
 
 // Convert data to refs
+type ClipId = number;
 const clipsOnDisplay = ref<Clip[] | PaginatedClip>();
-const copied = ref<number>();
+const copied = ref<ClipId>();
 const copiedTimeOut = ref<NodeJS.Timer>();
-const isViewing = ref<number>();
-const isSyncing = ref<number>();
-const syncedTimeOut = ref(0);
-const synced = ref(false);
-const favorite = ref(false);
+const isViewing = ref<ClipId>();
+const isSyncing = ref<ClipId>();
+const syncedTimeOut = ref<NodeJS.Timer>();
+const synced = ref<ClipId>();
+const favorite = ref<ClipId>();
 
 if (clips) {
   clipsOnDisplay.value = clips.value as Clip[];
@@ -210,32 +213,6 @@ function viewClip(clipId: number) {
 }
 
 function syncClip(clipId: number) {
-  // const clip = this.computedClips[clipId];
-  // if (!this.isSyncing && clip) {
-  //   this.isSyncing = clipId;
-  //
-  //   http
-  //     .post("add", {
-  //       api_key: this.config?.user.key,
-  //       content: clip.content
-  //     })
-  //     .then(() => {
-  //       loadClipsFromServer({ page: this.$route.query.page })
-  //         .then(() => {
-  //           this.isSyncing = false;
-  //           this.synced = clipId;
-  //
-  //           clearTimeout(this.syncedTimeOut);
-  //           this.syncedTimeOut = setTimeout(() => {
-  //             this.synced = false;
-  //           }, 5000);
-  //         })
-  //         .catch(() => (this.isSyncing = false));
-  //     })
-  //     .catch(() => (this.isSyncing = false));
-  // }
-
-  // convert to set up
   const clip = computedClips.value[clipId];
   if (isSyncing.value === undefined && clip) {
     isSyncing.value = clipId;
@@ -245,64 +222,73 @@ function syncClip(clipId: number) {
         content: clip.content
       })
       .then(() => {
-        loadClipsFromServer({ page: config.value.page })
+        loadClipsFromServer({ page: $route.query.page as string })
           .then(() => {
-            isSyncing.value = false;
+            isSyncing.value = undefined;
             synced.value = clipId;
 
             clearTimeout(syncedTimeOut.value);
             syncedTimeOut.value = setTimeout(() => {
-              synced.value = false;
+              synced.value = undefined;
             }, 5000);
           })
-          .catch(() => (isSyncing.value = false));
+          .catch(() => {
+            isSyncing.value = undefined;
+          });
       })
-      .catch(() => (isSyncing.value = false));
+      .catch(() => {
+        isSyncing.value = undefined;
+      });
   }
 }
 
-function deleteClip(clipId) {
+function deleteClip(clipId: number) {
   const shouldDelete = confirm("Are you sure you want to delete this clip?");
   if (shouldDelete) {
-    const clip = this.computedClips[clipId];
-    this.local ? this.clipsOnDisplay.splice(clipId, 1) : this.clipsOnDisplay.data.splice(clipId, 1);
+    const clip = computedClips.value[clipId];
+    if (local.value) {
+      (clipsOnDisplay.value as Clip[]).splice(clipId, 1);
+    } else {
+      (clipsOnDisplay.value as PaginatedClip).data.splice(clipId, 1);
+    }
 
-    if (this.isDev) {
-      if (this.local) {
-        localStore.setArray("localClips", this.clipsOnDisplay);
+    if (isDev) {
+      if (local.value) {
+        localStore.setArray("localClips", clipsOnDisplay.value as Clip[]);
       } else {
-        this.deleteOnlineClip(clip);
+        deleteOnlineClip(clip);
       }
     } else {
-      if (this.local) {
+      if (local.value) {
         tellBackground("deleteLocalClip", { clip });
       } else {
-        this.deleteOnlineClip(clip);
+        deleteOnlineClip(clip);
       }
     }
   }
 }
 
-function deleteOnlineClip(clip) {
+function deleteOnlineClip(clip: Clip) {
   if (clip.code) {
     http
       .delete("delete", {
-        params: { clip: clip.code },
-        headers: { "oc-key": this.config?.user.key }
+        params: { clip: clip.code }
       })
       .then(() => {
-        loadClipsFromServer({ page: this.$route.query.page });
+        loadClipsFromServer({ page: $route.query.page as string });
       });
   }
 }
 
-function favClip(clipId) {
-  const clip = this.computedClips[clipId];
+function favClip(clipId: number) {
+  const clip = computedClips.value[clipId];
   tellBackground("favClip", { clip });
-  this.favorite = clipId;
-  clearTimeout(this.syncedTimeOut);
-  this.syncedTimeOut = setTimeout(() => {
-    this.favorite = false;
+
+  favorite.value = clipId;
+  clearTimeout(syncedTimeOut.value);
+
+  syncedTimeOut.value = setTimeout(() => {
+    favorite.value = undefined;
   }, 5000);
 }
 </script>

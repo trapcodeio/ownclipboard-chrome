@@ -15,15 +15,16 @@ const searchData = ref<Clip[]>([]);
 const showSearch = ref(false);
 const hasSearchQuery = ref(false);
 
-
-onMounted(() => {
+function getClips() {
   loadLocalClips()
     .then(($clips) => {
       if (Array.isArray($clips)) clips.value = $clips;
       loaded.value = true;
     })
     .catch((e) => e);
-});
+}
+
+onMounted(getClips);
 
 function runSearch(query: string) {
   if (!query.length) {
@@ -62,10 +63,11 @@ const displayedClips = computed(() => {
       </div>
     </div>
 
-    <Search v-if="showSearch"
+    <Search
+      v-if="showSearch"
       @search="runSearch"
       v-model:hasQuery="hasSearchQuery"
-      :has-search-results="searchData.length>0"
+      :has-search-results="searchData.length > 0"
     />
 
     <Clips

@@ -1,6 +1,7 @@
 import type { Paginated } from "xpress-mongo/src/types/pagination";
 
 export interface Clip {
+  code?: string;
   favorite?: boolean;
   content: string;
   html_formatted?: string;

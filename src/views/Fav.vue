@@ -8,23 +8,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { loadFavClips } from "../../package/functions/utils.fn";
 import Clips from "../components/Clips.vue";
 import { Clip } from "../../package/types";
+import { useRouteHelpers } from "../frontend";
 
-
+const { onPageNameChange } = useRouteHelpers();
 const loaded = ref(false);
 const clips = ref([] as Clip[]);
 
-loadFavClips().then(($clips) => {
-  console.log($clips);
-  if (Array.isArray($clips)) clips.value = $clips;
+function getFavClips() {
+  loadFavClips()
+    .then(($clips) => {
+      console.log("Fav Clips:", $clips);
+      if (Array.isArray($clips)) clips.value = $clips;
+      loaded.value = true;
+    })
+    .catch((e) => e);
+}
 
-  loaded.value = true;
-}).catch((e) => e);
-
-
+onMounted(getFavClips);
+onPageNameChange(getFavClips);
 </script>
 
 <style scoped></style>
