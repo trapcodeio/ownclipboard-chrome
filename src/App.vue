@@ -33,15 +33,14 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import store from "./store";
 import { chromeStore, localStore } from "../package/WebStore";
 import chromeAppConfig from "../package/config";
 import Login from "./components/Login.vue";
 import Menu from "./components/Menu.vue";
 import { isDev, tellBackground } from "./frontend";
-import { useRoute } from "vue-router";
-const $route = useRoute();
+
 let loaded = ref(false);
 const $config = ref<any>({
   user: { connected: false }
